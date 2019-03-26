@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root>
+    <CurrentStatus>
+        <LicensePlateNumber>鄂EA12345</LicensePlateNumber>
+        <CurrentTime>2011-11-20</CurrentTime>
+        <Speed>60Km/h</Speed>
+        <Lon>10646270</Lon>
+        <Lat>2955278</Lat>
+    </CurrentStatus>
+    <CurrentStatus>
+        <LicensePlateNumber>渝A77881</LicensePlateNumber>
+        <CurrentTime>2010-03-21</CurrentTime>
+        <Speed>88Km/h</Speed>
+        <Lon>10646252</Lon>
+        <Lat>2955755</Lat>
+    </CurrentStatus> 
+</Root>
