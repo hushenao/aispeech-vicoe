@@ -48,12 +48,19 @@ export const status = {
     undo: () => 'undo',
     removeFormat: () => 'removeFormat',
     selectAll: () => 'selectAll',
-    w: (selection) => `<w style="${format.w.style}">${selection}</w>`, // 设置连读
-    phoneme: (selection, py = 'hao') => `<phoneme py="${py}" style="${format.phoneme.style}">${selection}</phoneme>`, // 修改发音
-    break: (strength) => `<break strength="${strength}" style="${format[strength].style}">|</break>`, // 添加停顿
+    w: (selection) => `<w onclick="tos(this)" style="${format.w.style}">${selection}</w>`, // 设置连读
+    phoneme: (selection, py = 'hao') => `<phoneme onclick="tos(this)" py="${py}" style="${format.phoneme.style}">${selection}</phoneme>`, // 修改发音
+    break: (strength) => `<break onclick="tos(this)" strength="${strength}" style="${format[strength].style}">|</break>`, // 添加停顿
     sayas: (selection, type) => {
             return `<sayas type="${type}" style="${format[type].style}">${selection}</sayas>`
         } //  spell-out（字母逐个读出）， number:digits（数字逐个读出），number:ordinal（数字按照数值发音）
+}
+
+// 写到全局上的方法
+window.tos = function(type) {
+    console.log(type)
+    console.log(document.querySelector('.exec'))
+    document.querySelector('#customContextMenu').style.display = "block";
 }
 
 // 添加得节点类型
