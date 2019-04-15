@@ -1,28 +1,39 @@
-<?xml version="1.0" encoding="utf-8"?>  
-<Root>
-    <node>
-        <id>21</id>
-        <value>A</value>
-    </node>
-    <node>
-        <value>AA</value>
-    </node>
-    <node>
-        <value>B</value>
-    </node>
-    <node>
+<?xml version="1.0" encoding="utf-8"?>
+<speak xml:lang="cn">
+    <phoneme py="shang3">
+        <value>上</value>
+    </phoneme>
+    <phoneme py="yi4">
+        <value>一</value>
+    </phoneme>
+    <phoneme py="jie4">
+        <value>节</value>
+    </phoneme>
+    <w>
+        <value>这里的回声很大</value>
+    </w>
+    <break>
+      <value>|</value>
+   </break>
+    <sayas type="spell-out">
+       <value>Bdada</value>
+    </sayas>
+    <span>
         <value>C</value>
-    </node>
-    <node>
+    </span>
+    <span>
         <value>DE</value>
-    </node>
-    <node>
-        <value>FGH</value>
-    </node>
-    <node>
+    </span>
+    <sayas type="number:digits">
+        <value>12344444</value>
+    </sayas>
+    <sayas type="number:ordinal">
+        <value>7777888</value>
+    </sayas>
+    <span>
         <value>I</value>
-    </node>
-    <node>
+    </span>
+    <span>
         <value>J</value>
-    </node>
-</Root>
+    </span>
+</speak>

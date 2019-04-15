@@ -1,27 +1,31 @@
 import {
     loadXML,
     XmlToObject,
-    getSelectText,
     appendForm,
     HtmlToXml,
     judgeNaN,
     IsEN,
-    toGetJson,
-    JsonToDom,
     selectHtml,
-    replaceChat
+    replaceChat,
+    formatClear,
+    format,
+    HtmlToSsml,
+    status,
+    customContext
 } from './utils'
 
 export default {
     loadXML,
     XmlToObject,
-    getSelectText,
     appendForm,
     HtmlToXml,
     judgeNaN,
     IsEN,
-    toGetJson,
-    JsonToDom,
     selectHtml,
-    replaceChat
+    replaceChat,
+    formatClear,
+    format,
+    HtmlToSsml,
+    status,
+    customContext
 }
