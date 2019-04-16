@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="http://www.softwhy.com/" />
+    <title>元素的复制</title>
+    <style type="text/css">
+        body {
+            font-size: 18px
+        }
+
+        p {
+            border-style: none
+        }
+
+        .p1 {
+            background-color: #FFFFFF;
+            margin-top: 60px;
+            margin-bottom: 3px;
+            margin-left: 200px;
+        }
+
+        .p2 {
+            background-color: #FFFFFF;
+            margin-top: 2px;
+            margin-bottom: 3px;
+            margin-left: 150px;
+        }
+
+        .p3 {
+            background-color: #FFFFFF;
+            margin-top: 1px;
+            margin-bottom: 3px;
+            position: absolute;
+            left: 550px;
+            top: 60px
+        }
+
+        .p4 {
+            background-color: #FFFFFF;
+            margin-top: 1px;
+            margin-bottom: 3px;
+            position: absolute;
+            left: 500px;
+            top: 85px
+        }
+
+        .p5 {
+            background-color: #FFFFFF;
+            margin-top: 1px;
+            margin-bottom: 3px;
+            position: absolute;
+            left: 380px;
+            top: 190px
+        }
+    </style>
+    <script type='text/javascript'>
+        function getPositions() {  
+            var el = document.getElementById('shaixuan');  
+            var startPosition = 0; //所选文本的开始位置
+              
+            var endPosition = 0; //所选文本的结束位置
+              
+            if (document.selection) {     //IE
+                    
+                var range = document.selection.createRange(); //创建范围对象
+                    
+                var drange = range.duplicate(); //克隆对象
+                    
+                drange.moveToElementText(el); //复制范围
+                    
+                drange.setEndPoint('EndToEnd', range);    
+                startPosition = drange.text.length - range.text.length;    
+                endPosition = startPosition + range.text.length;  
+            }  
+            else if (window.getSelection) {     //Firefox,Chrome,Safari etc
+                    
+                startPosition = el.selectionStart;    
+                endPosition = el.selectionEnd;  
+            }  
+            return {    
+                "start": startPosition,
+                    "end": endPosition  
+            }
+        }
+
+        function getshaixuan() {  
+            var position = getPositions();  
+            var start = position.start; //开始位置
+              
+            var end = position.end; //结束位置
+              
+            var text = document.getElementById('shaixuan').value;  
+            var selectText = text.substr(start, (end - start)); //textarea中，选中的文本
+               //alert(selectText);
+              
+            var textBox1 = document.getElementById("canjia");  
+            textBox1.innerText = textBox1.value + selectText;
+        }
+        window.onload = function() {  
+            var bt = document.getElementById("bt");   
+            bt.onclick = function() {
+                getshaixuan();
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <p class="p1">筛选名单</p>
+    <textarea id="shaixuan" name="check" class="p2"></textarea>
+    <div class="p3">参加名单</div>
+    <textarea id="canjia" name="canjia" class="p4"></textarea>
+    <input type="button" value="内容复制" id="bt" class="p5" />
+</body>
+
+</html>

@@ -1,3 +1,5 @@
+import { isRegExp } from "util";
+
 export const format = {
     w: {
         style: 'background-color: #24f424;',
@@ -19,7 +21,7 @@ export const format = {
         type: 'weak'
     },
     phoneme: {
-        style: 'background-color: #24f425;',
+        style: 'background-color: #24f425; border-radius: 50%;',
         value: 'phoneme'
     },
     'spell-out': {
@@ -48,12 +50,50 @@ export const status = {
     undo: () => 'undo',
     removeFormat: () => 'removeFormat',
     selectAll: () => 'selectAll',
-    w: (selection) => `<w style="${format.w.style}">${selection}</w>`, // 设置连读
-    phoneme: (selection, py = 'hao') => `<phoneme py="${py}" style="${format.phoneme.style}">${selection}</phoneme>`, // 修改发音
-    break: (strength) => `<break strength="${strength}" style="${format[strength].style}">|</break>`, // 添加停顿
+    w: (selection) => `<w onclick="ws(this, '${selection}')" style="${format.w.style}">${selection}</w>`, // 设置连读
+    phoneme: (selection, py = 'hao') => `<phoneme onclick="phonemes(this, '${selection}', '${py}')" py="${py}" style="${format.phoneme.style}">${selection}</phoneme>`, // 修改发音
+    break: (strength) => `<break onclick="breaks(this)" strength="${strength}" style="${format[strength].style}">$</break>`, // 添加停顿
     sayas: (selection, type) => {
             return `<sayas type="${type}" style="${format[type].style}">${selection}</sayas>`
         } //  spell-out（字母逐个读出）， number:digits（数字逐个读出），number:ordinal（数字按照数值发音）
+}
+
+//设置全局得 break 方法
+window.breaks = function(event) {
+    console.log(event)
+    document.querySelector('#customContextMenu').style.display = "block";
+    document.querySelector('.breaks').style.display = "block";
+}
+
+window.phonemes = function(event, text, py) {
+    const selection = document.getSelection().toString()
+    if (!selection || selection.length > 1) return false
+    let pys = prompt('修改发音', py);
+    event.setAttribute('py', pys)
+    if (pys) {
+        document.execCommand('insertHTML', false, text)
+    }
+}
+
+window.ws = function(event, text) {
+    // debugger
+    // console.log(event.getAttribute('onclick'), event.innerHTML, text)
+    let html = document.querySelector('.exec').innerHTML
+    const reg = `<w onclick="${event.getAttribute('onclick')}" style="${format.w.style}">${event.innerHTML}</w>`
+    const regs = new RegExp(reg, 'ig')
+    document.querySelector('.exec').innerHTML = html.replace(regs, text)
+
+    console.log(regs)
+    console.log(document.querySelector('.exec').innerHTML)
+}
+
+// 写到全局上的方法
+window.tos = function(type, text, py) {
+    console.log(type)
+    console.log(document.querySelector('.exec'))
+    document.querySelector('#customContextMenu').style.display = "block";
+    let pys = prompt('修改发音', `<phoneme py="${py}">${text}</phoneme>`);
+    console.log(pys)
 }
 
 // 添加得节点类型
@@ -98,6 +138,7 @@ export function replaceChat(html) {
         .replace(/ style="[^=>]*"([(\s+\w+=)|>])/ig, '$1')
         .replace(/undefined/ig, '')
         .replace(/ style=""/ig, '')
+        .replace(/ onclick="(.*?)"/ig, '')
         .replace(/(<.*?)class\s*=.*?(\w+\s*=|\s*>)/ig, '$1$2')
         .replace(/<break>/ig, '')
     return `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${html}</speak>`
@@ -168,4 +209,35 @@ export function customContext(customContextMenu, activeNode) {
  */
 function getViewPortWidth() {
     return document.documentElement.clientWidth || document.body.clientWidth;
+}
+
+
+// 获取选中文本的位置
+export function getPositions(dom) {  
+    var el = dom  
+    var startPosition = 0; //所选文本的开始位置
+      
+    var endPosition = 0; //所选文本的结束位置
+      
+    if (document.selection) {     //IE
+            
+        var range = document.selection.createRange(); //创建范围对象
+            
+        var drange = range.duplicate(); //克隆对象
+            
+        drange.moveToElementText(el); //复制范围
+            
+        drange.setEndPoint('EndToEnd', range);    
+        startPosition = drange.text.length - range.text.length;    
+        endPosition = startPosition + range.text.length;  
+    }  
+    else if (window.getSelection) {     //Firefox,Chrome,Safari etc
+        console.log(el.innerHTML, window.getSelection())
+        startPosition = window.getSelection().anchorOffset;    
+        endPosition = window.getSelection().focusOffset;  
+    }  
+    return {    
+        start: startPosition,
+        end: endPosition  
+    }
 }

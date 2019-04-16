@@ -11,6 +11,6 @@ export default new Router({
         // component: () => import('@/components/g6/g6')
         // component: () => import('@/components/defineType')
         component: () =>
-            import ('@/components/ssml-demo')
+            import ('@/components/ssml-update')
     }]
 })
