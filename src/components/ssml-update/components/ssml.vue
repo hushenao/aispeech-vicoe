@@ -163,7 +163,9 @@ export default {
       if (!selection || selection.trim().length < 2) return false
       if (/[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
         this.active = ''
-        alert('选中的文字中不能包含字符串和数字')
+        this.$alert('选中的文字中不能包含字符串和数字', '警告', {
+          confirmButtonText: '取消'
+        })
         return false
       }
       let parentNode = this.querySelection(true).focusNode.parentNode
@@ -187,7 +189,9 @@ export default {
       if (!selection) return false
       if (/[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
         this.active = ''
-        alert('选中的文字中不能包含字符串和数字')
+        this.$alert('选中的文字中不能包含字符串和数字', '警告', {
+          confirmButtonText: '取消'
+        })
         return false
       }
       let htmls = ''
@@ -334,7 +338,10 @@ export default {
             // this.active = ''
             ev.preventDefault()
             ev.stopPropagation()
-            alert('选中的文字中不能包含字符串和数字')
+            this.$alert('选中的文字中不能包含字符串和数字', '警告', {
+              confirmButtonText: '取消'
+            })
+            // alert('选中的文字中不能包含字符串和数字')
             return false
           }
           this.activePhoneme = selection.replace(/\s/g, "").split('')
@@ -351,7 +358,10 @@ export default {
             // this.active = ''
             ev.preventDefault()
             ev.stopPropagation()
-            alert('选中的文字中不能包含字符串和数字');
+            this.$alert('选中的文字中不能包含字符串和数字', '警告', {
+              confirmButtonText: '取消'
+            })
+            // alert('选中的文字中不能包含字符串和数字');
             return false
           }
         }
@@ -360,7 +370,10 @@ export default {
             // this.active = ''
             ev.preventDefault()
             ev.stopPropagation()
-            alert('选中的不是数字');
+            this.$alert('选中的不是数字', '警告', {
+              confirmButtonText: '取消'
+            })
+            // alert('选中的不是数字');
             return false
           }
         }
@@ -369,7 +382,10 @@ export default {
             // this.active = ''
             ev.preventDefault()
             ev.stopPropagation()
-            alert('选中的不是字符')
+            this.$alert('选中的不是字符', '警告', {
+              confirmButtonText: '取消'
+            })
+            // alert('选中的不是字符')
             return false;
           }
         }

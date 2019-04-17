@@ -1,4 +1,4 @@
-import { isRegExp } from "util";
+import Vue from 'vue';
 
 export const format = {
     w: {
@@ -60,7 +60,13 @@ export const status = {
 
 //设置全局得 break 方法
 window.breaks = function(event, strength) {
-    if (confirm('确认删除停顿')) {
+    Vue.prototype.$confirm('确认删除停顿', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        closeOnClickModal: false,
+        showClose: false
+    }).then(() => {
         let html = document.querySelector('.exec').innerHTML
         const reg = `<break onclick="${event.getAttribute('onclick')}" strength="${strength}" style="${format[strength].style}">|</break>`
         document.querySelector('.exec').innerHTML = html.replace(reg, '')
@@ -69,26 +75,58 @@ window.breaks = function(event, strength) {
         let ssmlHtml = htmlTextNode.innerHTML
         let regs = `&lt;break strength="${strength}"&gt;&lt;/break&gt;`
         htmlTextNode.innerHTML = ssmlHtml.replace(regs, '')
-    } else {
+    }).catch(() => {
         return false
-    }
+    })
+
+    // if (confirm('确认删除停顿')) {
+    //     let html = document.querySelector('.exec').innerHTML
+    //     const reg = `<break onclick="${event.getAttribute('onclick')}" strength="${strength}" style="${format[strength].style}">|</break>`
+    //     document.querySelector('.exec').innerHTML = html.replace(reg, '')
+
+    //     let htmlTextNode = document.querySelector('.html-text')
+    //     let ssmlHtml = htmlTextNode.innerHTML
+    //     let regs = `&lt;break strength="${strength}"&gt;&lt;/break&gt;`
+    //     htmlTextNode.innerHTML = ssmlHtml.replace(regs, '')
+    // } else {
+    //     return false
+    // }
 }
 
 window.phonemes = function(event, text, py) {
     const selection = document.getSelection().toString()
     if (!selection || selection.length > 1) return false
-    let pys = prompt('修改发音', py);
-    event.setAttribute('py', pys)
-    if (pys) {
-        document.execCommand('insertHTML', false, text)
-        let htmlTextNode = document.querySelector('.html-text')
+    Vue.prototype.$prompt('修改发音', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        closeOnClickModal: false,
+        showClose: false,
+        inputPattern: /^[a-z]{1,}[1-5]{1}$/,
+        inputErrorMessage: '请输入正确是拼音格式(如：ping2)'
+    }).then(({ value = py }) => {
+        event.setAttribute('py', value)
+        if (value) {
+            document.execCommand('insertHTML', false, text)
+        }
+    }).catch(() => {
+        return false
+    })
 
-        // htmlTextNode.innerText = `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${replaceChat(htmlTextNode.innerText)}</speak>`
-    }
+    // let pys = prompt('修改发音', py);
+    // event.setAttribute('py', pys)
+    // if (pys) {
+    //     document.execCommand('insertHTML', false, text)
+    // }
 }
 
 window.ws = function(event, text) {
-    if (confirm("确认清除此连续")) {
+    Vue.prototype.$confirm('确认清除此连续', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        closeOnClickModal: false,
+        showClose: false
+    }).then(() => {
         const html = document.querySelector('.exec').innerHTML
         const reg = `<w onclick="${event.getAttribute('onclick')}" style="${format.w.style}">${text}</w>`
         document.querySelector('.exec').innerHTML = html.replace(reg, text)
@@ -96,13 +134,31 @@ window.ws = function(event, text) {
         let ssmlHtml = document.querySelector('.html-text').innerHTML
         let regs = `&lt;w&gt;${text}&lt;/w&gt;`
         document.querySelector('.html-text').innerHTML = ssmlHtml.replace(regs, text)
-    } else {
+    }).catch(() => {
         return false
-    }
+    })
+
+    // if (confirm("确认清除此连续")) {
+    //     const html = document.querySelector('.exec').innerHTML
+    //     const reg = `<w onclick="${event.getAttribute('onclick')}" style="${format.w.style}">${text}</w>`
+    //     document.querySelector('.exec').innerHTML = html.replace(reg, text)
+
+    //     let ssmlHtml = document.querySelector('.html-text').innerHTML
+    //     let regs = `&lt;w&gt;${text}&lt;/w&gt;`
+    //     document.querySelector('.html-text').innerHTML = ssmlHtml.replace(regs, text)
+    // } else {
+    //     return false
+    // }
 }
 
 window.sayass = function(event, text, type) {
-    if (confirm("确认清除此数字和字符发音方式")) {
+    Vue.prototype.$confirm('确认清除此数字和字符发音方式', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        closeOnClickModal: false,
+        showClose: false
+    }).then(() => {
         const html = document.querySelector('.exec').innerHTML
         const reg = `<sayas onclick="${event.getAttribute('onclick')}" type="${type}" style="${format[type].style}">${text}</sayas>`
         document.querySelector('.exec').innerHTML = html.replace(reg, text)
@@ -110,9 +166,21 @@ window.sayass = function(event, text, type) {
         let ssmlHtml = document.querySelector('.html-text').innerHTML
         let regs = `&lt;sayas type="${type}"&gt;${text}&lt;/sayas&gt;`
         document.querySelector('.html-text').innerHTML = ssmlHtml.replace(regs, text)
-    } else {
+    }).catch(() => {
         return false
-    }
+    })
+
+    // if (confirm("确认清除此数字和字符发音方式")) {
+    //     const html = document.querySelector('.exec').innerHTML
+    //     const reg = `<sayas onclick="${event.getAttribute('onclick')}" type="${type}" style="${format[type].style}">${text}</sayas>`
+    //     document.querySelector('.exec').innerHTML = html.replace(reg, text)
+
+    //     let ssmlHtml = document.querySelector('.html-text').innerHTML
+    //     let regs = `&lt;sayas type="${type}"&gt;${text}&lt;/sayas&gt;`
+    //     document.querySelector('.html-text').innerHTML = ssmlHtml.replace(regs, text)
+    // } else {
+    //     return false
+    // }
 
 }
 
