@@ -17,9 +17,9 @@
     <div style="text-align:left;">生成的SSML文档：</div>
     <div class="html-text">{{htmlText}}</div>
     <!-- 生成的SSML解析成HTML文档 -->
-    <div style="text-align:left;">生成的SSML解析成HTML文档：</div>
-    <div class="html-text" v-html="ssmltohtml"></div>
-    <div class="to-right-click" id="customContextMenu" v-show="active">
+    <!-- <div style="text-align:left;">生成的SSML解析成HTML文档：</div>
+    <div class="html-text" v-html="ssmltohtml"></div> -->
+    <!-- <div class="to-right-click" id="customContextMenu" v-show="active">
 
       <div class="breaks option" v-show="active === 'break'">
         <h4>添加停顿</h4>
@@ -99,7 +99,55 @@
         </div>
       </div>
 
-    </div>
+    </div> -->
+
+    <el-dialog
+      title="提示"
+      :visible.sync="centerDialogVisible"
+      :width="active === 'break' ? '35%' : '45%'"
+      :show-close="false"
+      :close-on-click-modal="false">
+      <!-- 设置断点 -->
+      <div class="breaks option" v-show="active === 'break'">
+        <h4>添加停顿</h4>
+        <p>请选择停顿的长短</p>
+        <el-radio-group v-model="activeBreak">
+          <el-radio class="radios" label="strong">长停顿</el-radio>
+          <el-radio class="radios" label="medium">中停顿</el-radio>
+          <el-radio class="radios" label="weak">短停顿</el-radio>
+        </el-radio-group>
+      </div>
+      <div class="dialog-footer" slot="footer" v-show="active === 'break'">
+        <el-button @click="hiedDiv">取消</el-button>
+        <el-button type="primary" @click="breaks(activeBreak)">保存</el-button>
+      </div>
+
+      <!-- 设置数字穿读方式 -->
+      <div class="digits option" v-show="active === 'number'">
+        <h4>设置数字串读方式</h4>
+        <el-radio-group v-model="activeNumber">
+          <el-radio class="radios" label="number:digits">按数值朗读(例：2007 读作 二千零七)</el-radio>
+          <el-radio class="radios" label="number:ordinal">数字逐个朗读(例：2007 读作 二零零七)</el-radio>
+        </el-radio-group>
+      </div>
+      <div class="dialog-footer" slot="footer" v-show="active === 'number'">
+        <el-button @click="hiedDiv">取消</el-button>
+        <el-button type="primary" @click="numbers(activeNumber)">保存</el-button>
+      </div>
+
+      <!-- 设置字母穿读方式 -->
+      <div class="spell-out option" v-show="active === 'spell-out'">
+        <h4>设置字母串读方式</h4>
+        <el-radio-group v-model="activeSpellout">
+          <el-radio class="radios" label="spell-out">字母逐个朗读（字母发言间隔较大）</el-radio>
+          <el-radio class="radios" label="acronym">字母逐个朗读（字母发言间隔较小）</el-radio>
+        </el-radio-group>
+      </div>
+      <div class="dialog-footer" slot="footer" v-show="active === 'spell-out'">
+        <el-button @click="hiedDiv">取消</el-button>
+        <el-button type="primary" @click="acronym(activeSpellout)">保存</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -116,6 +164,7 @@ import Utils from '../utils';
 export default {
   data () {
     return {
+        centerDialogVisible: false,
         active: '',
         activeBreak: '',
         activeW: '',
@@ -332,6 +381,7 @@ export default {
       } else {
         if (this.active === ACTIVE.break) {
           if (selection.trim()) return false
+          this.centerDialogVisible = true
         }
         if (this.active === ACTIVE.phoneme) {
           if (/[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
@@ -350,6 +400,7 @@ export default {
               return this.createPinYin(item, index)
             })
           }
+          this.centerDialogVisible = true
         }
         if (this.active === ACTIVE.w) {
           if (!selection || selection.trim().length < 2) return false
@@ -364,6 +415,7 @@ export default {
             // alert('选中的文字中不能包含字符串和数字');
             return false
           }
+          this.centerDialogVisible = true
         }
         if (this.active === ACTIVE.number) {
           if (Utils.judgeNaN(selection.trim() * 1)) {
@@ -376,6 +428,7 @@ export default {
             // alert('选中的不是数字');
             return false
           }
+          this.centerDialogVisible = true
         }
         if (this.active === ACTIVE.spellout) {
           if (!Utils.IsEN(selection.trim())) {
@@ -388,13 +441,15 @@ export default {
             // alert('选中的不是字符')
             return false;
           }
+          this.centerDialogVisible = true
         }
-        Utils.customContext(customContextMenu, html)
+        // Utils.customContext(customContextMenu, html)
       }
     },
     hiedDiv () {
       // this.active = ''
-      document.querySelector('#customContextMenu').style.display = "none";
+      this.centerDialogVisible = false
+      // document.querySelector('#customContextMenu').style.display = "none";
     },
     // 获取汉字的拼音 包括多音字
     createPinYin (item, index) {
@@ -471,6 +526,7 @@ export default {
 .radios {
   display: block;
   margin-bottom: 20px;
+  text-align: left;
 }
 .option {
   padding: 0 20px 0 20px;
