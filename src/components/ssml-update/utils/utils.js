@@ -96,7 +96,7 @@ window.breaks = function(event, strength) {
 window.phonemes = function(event, text, py) {
     const selection = document.getSelection().toString()
     if (!selection || selection.length > 1) return false
-    Vue.prototype.$prompt('修改发音', '提示', {
+    Vue.prototype.$prompt(`修改(${text}-${py})发音`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         closeOnClickModal: false,
