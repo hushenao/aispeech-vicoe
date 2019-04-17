@@ -6,16 +6,25 @@
       <el-button :type="active === 'w' ? 'primary' : ''" @click="toW('w')">设置连续</el-button>
       <el-button :type="active === 'number' ? 'primary' : ''" @click="exchange('number')">设置数字串读方式</el-button>
       <el-button :type="active === 'spell-out' ? 'primary' : ''" @click="exchange('spell-out')">设置字母串读方式</el-button>
-      <el-button @click="undo">撤销上一步</el-button>
+      <!-- <el-button @click="undo">撤销上一步</el-button> -->
       <el-button @click="removeFormat">清除样式</el-button>
       <el-button @click="del">删除内容</el-button>
     </div>
     <!--语音数据源 -->
-    <div style="text-align:left;">语音数据源：</div>
-    <div class="exec" contentEditable="true" @contextmenu.prevent='mousedown($event)'>{{text.trim()}}</div>
+    <!-- <div style="text-align:left;">语音数据源：</div> -->
+    <!-- <div class="exec" contentEditable="true" @contextmenu.prevent='mousedown($event)'>{{text.trim()}}</div> -->
     <!-- 生成的SSML文档 -->
-    <div style="text-align:left;">生成的SSML文档：</div>
-    <div class="html-text">{{htmlText}}</div>
+    <!-- <div style="text-align:left;">生成的SSML文档：</div> -->
+    <!-- <div class="html-text">{{htmlText}}</div> -->
+    <div class='ssml-header'>
+      <div class="origin">语音数据源：</div>
+      <div class="to-ssml">生成的SSML文档：</div>
+    </div>
+    <div class="ssml-wrap">
+      <div class="ssml-origin exec" contentEditable="true" @contextmenu.prevent='mousedown($event)'>{{text.trim()}}</div>
+      <div class="ssml-text html-text">{{htmlText}}</div>
+    </div>
+
     <!-- 生成的SSML解析成HTML文档 -->
     <!-- <div style="text-align:left;">生成的SSML解析成HTML文档：</div>
     <div class="html-text" v-html="ssmltohtml"></div> -->
@@ -104,7 +113,7 @@
     <el-dialog
       title="提示"
       :visible.sync="centerDialogVisible"
-      :width="active === 'break' ? '35%' : '45%'"
+      :width="active === 'break' ? '25%' : '30%'"
       :show-close="false"
       :close-on-click-modal="false">
       <!-- 设置断点 -->
@@ -491,13 +500,14 @@ export default {
 </script>
 
 <style scoped>
-.exec {
+@import '../css/style.css';
+/* .exec {
   border: 1px solid pink;
   min-height: 120px;
   text-align: left;
   letter-spacing: 3px;
-}
-.to-right-click {
+} */
+/* .to-right-click {
   width: 350px;
   min-height: 200px;
   max-height: 300px;
@@ -511,16 +521,16 @@ export default {
   padding: 0 0 10px 0;
   margin: 0;
   display: none;
-}
-.html-text {
+} */
+/* .html-text {
   margin-top: 20px;
   min-height: 120px;
   border: 1px solid pink;
   white-space: pre-line;
   text-align: left;
   letter-spacing: 3px;
-}
-.breaks {
+} */
+/* .breaks {
   padding-left: 20px;
 }
 .radios {
@@ -530,20 +540,20 @@ export default {
 }
 .option {
   padding: 0 20px 0 20px;
-}
-.edit-title > span, .edit-item > div {
+} */
+/* .edit-title > span, .edit-item > div {
   width: 90px;
   height: 33px;
   display: inline-block;
   margin: 0 5px;
-}
-.edit-title > span:nth-child(1),  .edit-item > div:nth-child(1) {
+} */
+/* .edit-title > span:nth-child(1),  .edit-item > div:nth-child(1) {
   width: 50px;
-}
-.selecteds {
+} */
+/* .selecteds {
   min-height: 60px;
   overflow-y: auto;
   overflow-x: hidden;
   border: 1px solid pink;
-}
+} */
 </style>

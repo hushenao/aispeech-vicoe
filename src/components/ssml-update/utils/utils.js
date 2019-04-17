@@ -105,6 +105,7 @@ window.phonemes = function(event, text, py) {
         inputErrorMessage: '请输入正确是拼音格式(如：ping2)'
     }).then(({ value = py }) => {
         event.setAttribute('py', value)
+        event.setAttribute('onclick', `phonemes(this, '${text}', '${value}')`)
         if (value) {
             document.execCommand('insertHTML', false, text)
         }

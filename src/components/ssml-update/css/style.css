@@ -1,0 +1,61 @@
+.ssml-header {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    display: flex;
+}
+
+.origin {
+    width: 49%;
+    margin-right: 5px;
+}
+
+.to-ssml {
+    width: 49%;
+}
+
+.ssml-wrap {
+    width: 100%;
+    height: 300px;
+    display: flex;
+}
+
+.ssml-origin {
+    width: 49%;
+    margin-right: 5px;
+    padding-left: 5px;
+    border: 1px solid pink;
+    box-sizing: border-box;
+    min-height: 300px;
+    text-align: left;
+    letter-spacing: 3px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.ssml-text {
+    width: 49%;
+    padding-left: 5px;
+    border: 1px solid pink;
+    box-sizing: border-box;
+    min-height: 300px;
+    white-space: pre-line;
+    text-align: left;
+    letter-spacing: 3px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.breaks {
+    padding-left: 20px;
+}
+
+.radios {
+    display: block;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.option {
+    padding: 0 20px 0 20px;
+}
