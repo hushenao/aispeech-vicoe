@@ -353,9 +353,9 @@ export default {
 
       const html = this.queryDom('.exec')
       const htmlText = this.queryDom('.html-text')
-      this.htmlText = Utils.replaceChat(html.innerHTML)
-      this.ssmltohtml = Utils.HtmlToSsml(this.htmlText)
-      htmlText.innerText = this.comm(this.htmlText) //  `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${this.htmlText}</speak>`
+      // this.htmlText = Utils.replaceChat(html.innerHTML)
+      // this.ssmltohtml = Utils.HtmlToSsml(this.htmlText)
+      htmlText.innerText = this.comm(Utils.replaceChat(html.innerHTML)) //  `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${this.htmlText}</speak>`
       this.hiedDiv()
     },
     acronym (type) {
@@ -366,8 +366,8 @@ export default {
 
       let html = this.queryDom('.exec')
       const htmlText = this.queryDom('.html-text')
-      this.htmlText = Utils.replaceChat(html.innerHTML)
-      htmlText.innerText = this.comm(this.htmlText) //  `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${this.htmlText}</speak>`
+      // this.htmlText = Utils.replaceChat(html.innerHTML)
+      htmlText.innerText = this.comm(Utils.replaceChat(html.innerHTML)) //  `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${this.htmlText}</speak>`
       this.hiedDiv()
     },
     // 撤销最近指定的命令
