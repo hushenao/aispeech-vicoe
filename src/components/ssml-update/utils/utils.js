@@ -6,17 +6,17 @@ export const format = {
         value: 'w'
     },
     strong: {
-        style: 'font-size: 20px; color: #24f424; font-weight: 900;',
+        style: 'font-size: 16px; color: #24f424; font-weight: 900; display: inline-block; height:20px; width: 10px; background-color: #24f425;',
         value: 'break',
         type: 'strong'
     },
     medium: {
-        style: 'font-size: 18px; color: #24f424; font-weight: 900;',
+        style: 'font-size: 16px; color: #24f424; font-weight: 900; display: inline-block; height:20px; width: 7px; background-color: #24f425;',
         value: 'break',
         type: 'medium'
     },
     weak: {
-        style: 'font-size: 16px; color: #24f424; font-weight: 900;',
+        style: 'font-size: 16px; color: #24f424; font-weight: 900; display: inline-block; height:20px; width: 5px; background-color: #24f425;',
         value: 'break',
         type: 'weak'
     },
@@ -52,17 +52,26 @@ export const status = {
     selectAll: () => 'selectAll',
     w: (selection) => `<w onclick="ws(this, '${selection}')" style="${format.w.style}">${selection}</w>`, // 设置连读
     phoneme: (selection, py = 'hao') => `<phoneme onclick="phonemes(this, '${selection}', '${py}')" py="${py}" style="${format.phoneme.style}">${selection}</phoneme>`, // 修改发音
-    break: (strength) => `<break onclick="breaks(this)" strength="${strength}" style="${format[strength].style}">$</break>`, // 添加停顿
+    break: (strength) => `<break onclick="breaks(this, '${strength}')" strength="${strength}" style="${format[strength].style}">|</break>`, // 添加停顿
     sayas: (selection, type) => {
-            return `<sayas type="${type}" style="${format[type].style}">${selection}</sayas>`
+            return `<sayas onclick="sayass(this,'${selection}', '${type}')" type="${type}" style="${format[type].style}">${selection}</sayas>`
         } //  spell-out（字母逐个读出）， number:digits（数字逐个读出），number:ordinal（数字按照数值发音）
 }
 
 //设置全局得 break 方法
-window.breaks = function(event) {
-    console.log(event)
-    document.querySelector('#customContextMenu').style.display = "block";
-    document.querySelector('.breaks').style.display = "block";
+window.breaks = function(event, strength) {
+    if (confirm('确认删除停顿')) {
+        let html = document.querySelector('.exec').innerHTML
+        const reg = `<break onclick="${event.getAttribute('onclick')}" strength="${strength}" style="${format[strength].style}">|</break>`
+        document.querySelector('.exec').innerHTML = html.replace(reg, '')
+
+        let htmlTextNode = document.querySelector('.html-text')
+        let ssmlHtml = htmlTextNode.innerHTML
+        let regs = `&lt;break strength="${strength}"&gt;&lt;/break&gt;`
+        htmlTextNode.innerHTML = ssmlHtml.replace(regs, '')
+    } else {
+        return false
+    }
 }
 
 window.phonemes = function(event, text, py) {
@@ -72,28 +81,39 @@ window.phonemes = function(event, text, py) {
     event.setAttribute('py', pys)
     if (pys) {
         document.execCommand('insertHTML', false, text)
+        let htmlTextNode = document.querySelector('.html-text')
+
+        // htmlTextNode.innerText = `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${replaceChat(htmlTextNode.innerText)}</speak>`
     }
 }
 
 window.ws = function(event, text) {
-    // debugger
-    // console.log(event.getAttribute('onclick'), event.innerHTML, text)
-    let html = document.querySelector('.exec').innerHTML
-    const reg = `<w onclick="${event.getAttribute('onclick')}" style="${format.w.style}">${event.innerHTML}</w>`
-    const regs = new RegExp(reg, 'ig')
-    document.querySelector('.exec').innerHTML = html.replace(regs, text)
+    if (confirm("确认清除此连续")) {
+        const html = document.querySelector('.exec').innerHTML
+        const reg = `<w onclick="${event.getAttribute('onclick')}" style="${format.w.style}">${text}</w>`
+        document.querySelector('.exec').innerHTML = html.replace(reg, text)
 
-    console.log(regs)
-    console.log(document.querySelector('.exec').innerHTML)
+        let ssmlHtml = document.querySelector('.html-text').innerHTML
+        let regs = `&lt;w&gt;${text}&lt;/w&gt;`
+        document.querySelector('.html-text').innerHTML = ssmlHtml.replace(regs, text)
+    } else {
+        return false
+    }
 }
 
-// 写到全局上的方法
-window.tos = function(type, text, py) {
-    console.log(type)
-    console.log(document.querySelector('.exec'))
-    document.querySelector('#customContextMenu').style.display = "block";
-    let pys = prompt('修改发音', `<phoneme py="${py}">${text}</phoneme>`);
-    console.log(pys)
+window.sayass = function(event, text, type) {
+    if (confirm("确认清除此数字和字符发音方式")) {
+        const html = document.querySelector('.exec').innerHTML
+        const reg = `<sayas onclick="${event.getAttribute('onclick')}" type="${type}" style="${format[type].style}">${text}</sayas>`
+        document.querySelector('.exec').innerHTML = html.replace(reg, text)
+
+        let ssmlHtml = document.querySelector('.html-text').innerHTML
+        let regs = `&lt;sayas type="${type}"&gt;${text}&lt;/sayas&gt;`
+        document.querySelector('.html-text').innerHTML = ssmlHtml.replace(regs, text)
+    } else {
+        return false
+    }
+
 }
 
 // 添加得节点类型
@@ -130,9 +150,9 @@ export function replaceChat(html) {
         .replace(/<span style="background-color: #24f427;">(.*)<\/span>/ig, '<sayas type="acronym">$1</sayas>')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
-        .replace(/<span style="font-size: 20px; color: #24f424; font-weight: 900;">\|<\/span>?/ig, '<break strength="strong"></break>')
-        .replace(/<span style="font-size: 18px; color: #24f424; font-weight: 900;">\|<\/span>?/ig, '<break strength="medium"></break>')
-        .replace(/<span style="font-size: 16px; color: #24f424; font-weight: 900;">\|<\/span>?/ig, '<break strength="weak"></break>')
+        .replace(/<span style="font-size: 16px; color: #24f424; font-weight: 900; display: inline-block; height:20px; width: 10px; background-color: #24f425;">\|<\/span>?/ig, '<break strength="strong"></break>')
+        .replace(/<span style="font-size: 16px; color: #24f424; font-weight: 900; display: inline-block; height:20px; width: 10px; background-color: #24f425;">\|<\/span>?/ig, '<break strength="medium"></break>')
+        .replace(/<span style="font-size: 16px; color: #24f424; font-weight: 900; display: inline-block; height:20px; width: 10px; background-color: #24f425;">\|<\/span>?/ig, '<break strength="weak"></break>')
         .replace(/\|/g, '')
         .replace(/&nbsp;/ig, '')
         .replace(/ style="[^=>]*"([(\s+\w+=)|>])/ig, '$1')
@@ -141,7 +161,10 @@ export function replaceChat(html) {
         .replace(/ onclick="(.*?)"/ig, '')
         .replace(/(<.*?)class\s*=.*?(\w+\s*=|\s*>)/ig, '$1$2')
         .replace(/<break>/ig, '')
-    return `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${html}</speak>`
+        // .replace(/<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">(.*)<\/speak>/ig, '$1')
+
+    //return `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${html}</speak>`
+    return `${html}`
 }
 
 /**

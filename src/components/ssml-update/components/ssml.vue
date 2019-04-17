@@ -1,11 +1,11 @@
 <template>
   <div>
     <div class="btn-list">
-      <el-button @click="exchange('break')">添加停顿</el-button>
-      <el-button @click="toPhoneme('phoneme')">修改发音</el-button>
-      <el-button @click="exchange('w')">设置连续</el-button>
-      <el-button @click="exchange('number')">设置数字串读方式</el-button>
-      <el-button @click="exchange('spell-out')">设置字母串读方式</el-button>
+      <el-button :type="active === 'break' ? 'primary' : ''"  @click="toBreaks('break')">添加停顿</el-button>
+      <el-button :type="active === 'phoneme' ? 'primary' : ''" @click="toPhoneme('phoneme')">修改发音</el-button>
+      <el-button :type="active === 'w' ? 'primary' : ''" @click="toW('w')">设置连续</el-button>
+      <el-button :type="active === 'number' ? 'primary' : ''" @click="exchange('number')">设置数字串读方式</el-button>
+      <el-button :type="active === 'spell-out' ? 'primary' : ''" @click="exchange('spell-out')">设置字母串读方式</el-button>
       <el-button @click="undo">撤销上一步</el-button>
       <el-button @click="removeFormat">清除样式</el-button>
       <el-button @click="del">删除内容</el-button>
@@ -136,28 +136,60 @@ export default {
       // 文本内容改变事件
       htmls.addEventListener('input', function(){
         if (htmls) {
-          // console.log(htmls.innerText.length, htmls.innerText)
           if (htmls.innerText.length > 5000) {
             htmls.innerText = htmls.innerText.substring(0, 5000)
           }
-          // console.log(htmls.innerHTML)
+
           that.htmlText = Utils.replaceChat(htmls.innerHTML)
           that.ssmltohtml = Utils.HtmlToSsml(that.htmlText)
+
+          that.htmlText = that.comm(that.htmlText)
+          document.querySelector('.html-text').innerText = that.comm(Utils.replaceChat(that.ssmltohtml))
         }
       });
-      that.htmlText = Utils.replaceChat(htmls.innerHTML)
+      that.htmlText = that.comm(Utils.replaceChat(htmls.innerHTML))
     })
   },
   methods: {
+    comm (text) {
+      return `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${text}</speak>`
+    },
+    toBreaks (active) {
+      this.active = active
+    },
+    toW (active) {
+      this.active = active
+      let selection = this.querySelection()
+      if (!selection || selection.trim().length < 2) return false
+      if (/[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
+        this.active = ''
+        alert('选中的文字中不能包含字符串和数字')
+        return false
+      }
+      let parentNode = this.querySelection(true).focusNode.parentNode
+      if (parentNode.nodeName === 'PHONEME') {
+        let selectArr = selection.replace(/\s/g, "").split('')
+        let htmls = ''
+        selectArr.forEach((item, index) => {
+          htmls += `<phoneme py=${pinyin(item, {
+            style: pinyin.STYLE_TONE2
+          })}>${item}</phoneme>`
+        })
+        selection = htmls
+      }
+      this.execCommand('insertHTML', false, Utils.status.w(selection))
+      const html = this.queryDom('.exec')
+      this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
+    },
     toPhoneme (active) {
       this.active = active
-      // console.log(Utils.getPositions(this.queryDom('.exec')))
-      // let {start, end} = Utils.getPositions(this.queryDom('.exec'))
-      // var text = this.queryDom('.exec').innerText;  
-      // console.log(selectText)
-
       const selection = this.querySelection()
       if (!selection) return false
+      if (/[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
+        this.active = ''
+        alert('选中的文字中不能包含字符串和数字')
+        return false
+      }
       let htmls = ''
       this.activePhoneme = selection.replace(/\s/g, "").split('')
       this.activePhoneme = this.activePhoneme.map((item, index) => {
@@ -168,7 +200,7 @@ export default {
       })
       this.execCommand('insertHTML', false, htmls)
       const html = this.queryDom('.exec')
-      this.htmlText = Utils.replaceChat(html.innerHTML)
+      this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
 
     },
     queryDom (dom) {
@@ -209,7 +241,7 @@ export default {
       let text = Utils.status.break(type)
       this.execCommand('insertHTML', false, text)
       const html = this.queryDom('.exec')
-      this.htmlText = Utils.replaceChat(html.innerHTML)
+      this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))  // `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${Utils.replaceChat(html.innerHTML)}</speak>`
       this.hiedDiv()
     },
     phoneme () {
@@ -249,9 +281,12 @@ export default {
       const selection =this.querySelection().trim()
       if (!selection) return false
       this.execCommand('insertHTML', false, Utils.status.sayas(selection, type))
+
       const html = this.queryDom('.exec')
+      const htmlText = this.queryDom('.html-text')
       this.htmlText = Utils.replaceChat(html.innerHTML)
       this.ssmltohtml = Utils.HtmlToSsml(this.htmlText)
+      htmlText.innerText = this.comm(this.htmlText) //  `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${this.htmlText}</speak>`
       this.hiedDiv()
     },
     acronym (type) {
@@ -259,8 +294,11 @@ export default {
       if (!selection) return false
       let text = Utils.status.sayas(selection, type)
       this.execCommand('insertHTML', false, text)
+
       let html = this.queryDom('.exec')
+      const htmlText = this.queryDom('.html-text')
       this.htmlText = Utils.replaceChat(html.innerHTML)
+      htmlText.innerText = this.comm(this.htmlText) //  `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${this.htmlText}</speak>`
       this.hiedDiv()
     },
     // 撤销最近指定的命令
@@ -293,7 +331,7 @@ export default {
         }
         if (this.active === ACTIVE.phoneme) {
           if (/[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
-            this.active = ''
+            // this.active = ''
             ev.preventDefault()
             ev.stopPropagation()
             alert('选中的文字中不能包含字符串和数字')
@@ -307,9 +345,10 @@ export default {
           }
         }
         if (this.active === ACTIVE.w) {
+          if (!selection || selection.trim().length < 2) return false
           this.activeW = selection
           if ( /[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
-            this.active = ''
+            // this.active = ''
             ev.preventDefault()
             ev.stopPropagation()
             alert('选中的文字中不能包含字符串和数字');
@@ -318,7 +357,7 @@ export default {
         }
         if (this.active === ACTIVE.number) {
           if (Utils.judgeNaN(selection.trim() * 1)) {
-            this.active = ''
+            // this.active = ''
             ev.preventDefault()
             ev.stopPropagation()
             alert('选中的不是数字');
@@ -327,7 +366,7 @@ export default {
         }
         if (this.active === ACTIVE.spellout) {
           if (!Utils.IsEN(selection.trim())) {
-            this.active = ''
+            // this.active = ''
             ev.preventDefault()
             ev.stopPropagation()
             alert('选中的不是字符')
@@ -338,7 +377,7 @@ export default {
       }
     },
     hiedDiv () {
-      this.active = ''
+      // this.active = ''
       document.querySelector('#customContextMenu').style.display = "none";
     },
     // 获取汉字的拼音 包括多音字
