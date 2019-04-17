@@ -24,6 +24,9 @@
       <div class="ssml-origin exec" contentEditable="true" @contextmenu.prevent='mousedown($event)'>{{text.trim()}}</div>
       <div class="ssml-text html-text">{{htmlText}}</div>
     </div>
+    <div>
+      总字数为：{{ssmlLen}}
+    </div>
 
     <!-- 生成的SSML解析成HTML文档 -->
     <!-- <div style="text-align:left;">生成的SSML解析成HTML文档：</div>
@@ -157,6 +160,7 @@
         <el-button type="primary" @click="acronym(activeSpellout)">保存</el-button>
       </div>
     </el-dialog>
+
   </div>
 </template>
 
@@ -184,16 +188,19 @@ export default {
         html: '',
         htmlText: '',
         ssmltohtml: '',
-        text: '这是长命一个很不错的测试，现在我需要测试添加停顿，以及修改发音，设置连续，设置数字读取方式2019、2018和字母读取方式，是连读ABCD，还是单个读取abcd, 然后来进行一个反编译的过程'
+        text: '这是长命一个很不错的测试，现在我需要测试添加停顿，以及修改发音，设置连续，设置数字读取方式2019、2018和字母读取方式，是连读ABCD，还是单个读取abcd, 然后来进行一个反编译的过程',
+        ssmlLen: 0,
       }
   },
   mounted() {
     let that = this
     this.$nextTick(() => {
       const htmls = this.queryDom('.exec')
+      that.ssmlLen = htmls.innerText.length
       // 文本内容改变事件
       htmls.addEventListener('input', function(){
         if (htmls) {
+          that.ssmlLen = htmls.innerText.length
           if (htmls.innerText.length > 5000) {
             htmls.innerText = htmls.innerText.substring(0, 5000)
           }
