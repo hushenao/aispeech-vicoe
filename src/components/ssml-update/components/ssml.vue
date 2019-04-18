@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 操作按钮部分 -->
     <div class="btn-list">
       <el-button :type="active === 'break' ? 'primary' : ''"  @click="toBreaks('break')">添加停顿</el-button>
       <el-button :type="active === 'phoneme' ? 'primary' : ''" @click="toPhoneme('phoneme')">修改发音</el-button>
@@ -10,12 +11,7 @@
       <el-button @click="removeFormat">清除样式</el-button>
       <el-button @click="del">删除内容</el-button>
     </div>
-    <!--语音数据源 -->
-    <!-- <div style="text-align:left;">语音数据源：</div> -->
-    <!-- <div class="exec" contentEditable="true" @contextmenu.prevent='mousedown($event)'>{{text.trim()}}</div> -->
-    <!-- 生成的SSML文档 -->
-    <!-- <div style="text-align:left;">生成的SSML文档：</div> -->
-    <!-- <div class="html-text">{{htmlText}}</div> -->
+    <!-- 主体部分 -->
     <div class='ssml-header'>
       <div class="origin">语音数据源：</div>
       <div class="to-ssml">生成的SSML文档：</div>
@@ -32,21 +28,6 @@
     <!-- <div style="text-align:left;">生成的SSML解析成HTML文档：</div>
     <div class="html-text" v-html="ssmltohtml"></div> -->
     <!-- <div class="to-right-click" id="customContextMenu" v-show="active">
-
-      <div class="breaks option" v-show="active === 'break'">
-        <h4>添加停顿</h4>
-        <p>请选择停顿的长短</p>
-        <el-radio-group v-model="activeBreak">
-          <el-radio class="radios" label="strong">长停顿</el-radio>
-          <el-radio class="radios" label="medium">中停顿</el-radio>
-          <el-radio class="radios" label="weak">短停顿</el-radio>
-        </el-radio-group>
-        <div>
-          <el-button @click="hiedDiv">取消</el-button>
-          <el-button @click="breaks(activeBreak)">保存</el-button>
-        </div>
-      </div>
-
       <div class="phoneme option" v-show="active === 'phoneme'">
         <h4>修改发音</h4>
         <div class="edit-list">
@@ -74,45 +55,9 @@
           </div>
         </div>
       </div>
-
-      <div class="ws option" v-show="active === 'w'">
-        <h4>这是连续</h4>
-        <p>以下选中的内容作为一个词语连续</p>
-        <div class="selecteds">
-          {{activeW}}
-        </div>
-        <div>
-          <el-button @click="hiedDiv">取消</el-button>
-          <el-button @click="w">保存</el-button>
-        </div>
-      </div>
-
-      <div class="digits option" v-show="active === 'number'">
-        <h4>设置数字串读方式</h4>
-        <el-radio-group v-model="activeNumber">
-          <el-radio class="radios" label="number:digits">按数值朗读(例：2007 读作 二千零七)</el-radio>
-          <el-radio class="radios" label="number:ordinal">数字逐个朗读(例：2007 读作 二零零七)</el-radio>
-        </el-radio-group>
-        <div>
-          <el-button @click="hiedDiv">取消</el-button>
-          <el-button @click="numbers(activeNumber)">保存</el-button>
-        </div>
-      </div>
-
-      <div class="spell-out option" v-show="active === 'spell-out'">
-        <h4>设置字母串读方式</h4>
-        <el-radio-group v-model="activeSpellout">
-          <el-radio class="radios" label="spell-out">字母逐个朗读（字母发言间隔较大）</el-radio>
-          <el-radio class="radios" label="acronym">字母逐个朗读（字母发言间隔较小）</el-radio>
-        </el-radio-group>
-        <div>
-          <el-button @click="hiedDiv">取消</el-button>
-          <el-button @click="acronym(activeSpellout)">保存</el-button>
-        </div>
-      </div>
-
     </div> -->
 
+    <!-- 弹出操作框部分 -->
     <el-dialog
       title="提示"
       :visible.sync="centerDialogVisible"
@@ -228,7 +173,8 @@ export default {
       if (/[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
         this.active = ''
         this.$alert('选中的文字中不能包含字符串和数字', '警告', {
-          confirmButtonText: '取消'
+          confirmButtonText: '取消',
+          type: 'warning'
         })
         return false
       }
@@ -254,7 +200,8 @@ export default {
       if (/[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
         this.active = ''
         this.$alert('选中的文字中不能包含字符串和数字', '警告', {
-          confirmButtonText: '取消'
+          confirmButtonText: '取消',
+          type: 'warning'
         })
         return false
       }
@@ -426,7 +373,8 @@ export default {
             ev.preventDefault()
             ev.stopPropagation()
             this.$alert('选中的文字中不能包含字符串和数字', '警告', {
-              confirmButtonText: '取消'
+              confirmButtonText: '取消',
+              type: 'warning'
             })
             // alert('选中的文字中不能包含字符串和数字');
             return false
@@ -439,7 +387,8 @@ export default {
             ev.preventDefault()
             ev.stopPropagation()
             this.$alert('选中的不是数字', '警告', {
-              confirmButtonText: '取消'
+              confirmButtonText: '取消',
+              type: 'warning'
             })
             // alert('选中的不是数字');
             return false
@@ -452,7 +401,8 @@ export default {
             ev.preventDefault()
             ev.stopPropagation()
             this.$alert('选中的不是字符', '警告', {
-              confirmButtonText: '取消'
+              confirmButtonText: '取消',
+              type: 'warning'
             })
             // alert('选中的不是字符')
             return false;

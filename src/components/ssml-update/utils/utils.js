@@ -78,19 +78,6 @@ window.breaks = function(event, strength) {
     }).catch(() => {
         return false
     })
-
-    // if (confirm('确认删除停顿')) {
-    //     let html = document.querySelector('.exec').innerHTML
-    //     const reg = `<break onclick="${event.getAttribute('onclick')}" strength="${strength}" style="${format[strength].style}">|</break>`
-    //     document.querySelector('.exec').innerHTML = html.replace(reg, '')
-
-    //     let htmlTextNode = document.querySelector('.html-text')
-    //     let ssmlHtml = htmlTextNode.innerHTML
-    //     let regs = `&lt;break strength="${strength}"&gt;&lt;/break&gt;`
-    //     htmlTextNode.innerHTML = ssmlHtml.replace(regs, '')
-    // } else {
-    //     return false
-    // }
 }
 
 window.phonemes = function(event, text, py) {
@@ -112,12 +99,6 @@ window.phonemes = function(event, text, py) {
     }).catch(() => {
         return false
     })
-
-    // let pys = prompt('修改发音', py);
-    // event.setAttribute('py', pys)
-    // if (pys) {
-    //     document.execCommand('insertHTML', false, text)
-    // }
 }
 
 window.ws = function(event, text) {
@@ -138,18 +119,6 @@ window.ws = function(event, text) {
     }).catch(() => {
         return false
     })
-
-    // if (confirm("确认清除此连续")) {
-    //     const html = document.querySelector('.exec').innerHTML
-    //     const reg = `<w onclick="${event.getAttribute('onclick')}" style="${format.w.style}">${text}</w>`
-    //     document.querySelector('.exec').innerHTML = html.replace(reg, text)
-
-    //     let ssmlHtml = document.querySelector('.html-text').innerHTML
-    //     let regs = `&lt;w&gt;${text}&lt;/w&gt;`
-    //     document.querySelector('.html-text').innerHTML = ssmlHtml.replace(regs, text)
-    // } else {
-    //     return false
-    // }
 }
 
 window.sayass = function(event, text, type) {
@@ -177,19 +146,6 @@ window.sayass = function(event, text, type) {
     }).catch(() => {
         return false
     })
-
-    // if (confirm("确认清除此数字和字符发音方式")) {
-    //     const html = document.querySelector('.exec').innerHTML
-    //     const reg = `<sayas onclick="${event.getAttribute('onclick')}" type="${type}" style="${format[type].style}">${text}</sayas>`
-    //     document.querySelector('.exec').innerHTML = html.replace(reg, text)
-
-    //     let ssmlHtml = document.querySelector('.html-text').innerHTML
-    //     let regs = `&lt;sayas type="${type}"&gt;${text}&lt;/sayas&gt;`
-    //     document.querySelector('.html-text').innerHTML = ssmlHtml.replace(regs, text)
-    // } else {
-    //     return false
-    // }
-
 }
 
 // 添加得节点类型
