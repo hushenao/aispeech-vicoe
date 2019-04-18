@@ -298,3 +298,15 @@ export function getPositions(dom) {  
         end: endPosition  
     }
 }
+
+// 获取选中文本的内容
+export function querySelectHtml() {
+    let selectionObj = null,
+        rangeObj = null;
+    selectionObj = document.getSelection();
+    rangeObj = selectionObj.getRangeAt(0);
+    let docFragment = rangeObj.cloneContents();
+    let tempDiv = document.createElement("div");
+    tempDiv.appendChild(docFragment);
+    return tempDiv.innerHTML;
+}

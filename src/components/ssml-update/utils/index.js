@@ -7,7 +7,8 @@ import {
     formatClear,
     HtmlToSsml,
     customContext,
-    getPositions
+    getPositions,
+    querySelectHtml
 } from './utils'
 
 export default {
@@ -19,5 +20,6 @@ export default {
     formatClear,
     HtmlToSsml,
     customContext,
-    getPositions
+    getPositions,
+    querySelectHtml
 }

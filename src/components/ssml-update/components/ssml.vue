@@ -164,7 +164,8 @@ export default {
     toW (active) {
       this.active = active
       let selection = this.querySelection()
-      if (!selection || selection.trim().length < 2) return false
+      if (Utils.querySelectHtml().indexOf('</phoneme>') !== -1) return false
+      if (!selection || selection.trim().length < 2 || selection.indexOf('|') !== -1) return false
       if (/[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
         this.active = ''
         this.$alert('选中的文字中不能包含字符串和数字', '警告', {
@@ -192,7 +193,8 @@ export default {
     toPhoneme (active) {
       this.active = active
       const selection = this.querySelection()
-      if (!selection) return false
+      if (Utils.querySelectHtml().indexOf('</w>') !== -1) return false
+      if (!selection || selection.indexOf('|') !== -1) return false
       if (/[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
         this.active = ''
         this.$alert('选中的文字中不能包含字符串和数字', '警告', {
