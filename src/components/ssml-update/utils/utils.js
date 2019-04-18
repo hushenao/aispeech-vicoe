@@ -50,11 +50,11 @@ export const status = {
     undo: () => 'undo',
     removeFormat: () => 'removeFormat',
     selectAll: () => 'selectAll',
-    w: (selection) => `<w onclick="ws(this, '${selection}')" style="${format.w.style}">${selection}</w>`, // 设置连读
+    w: (selection, wIndex) => `<w onclick="ws(this, '${selection}', '${wIndex}')" style="${format.w.style}">${selection}</w>`, // 设置连读
     phoneme: (selection, py = 'hao') => `<phoneme onclick="phonemes(this, '${selection}', '${py}')" py="${py}" style="${format.phoneme.style}">${selection}</phoneme>`, // 修改发音
     break: (strength, indexs) => `<break onclick="breaks(this, '${strength}', '${indexs}')" strength="${strength}" style="${format[strength].style}">|</break>`, // 添加停顿
-    sayas: (selection, type) => {
-            return `<sayas onclick="sayass(this,'${selection}', '${type}')" type="${type}" style="${format[type].style}">${selection}</sayas>`
+    sayas: (selection, type, specialIndex) => {
+            return `<sayas onclick="sayass(this,'${selection}', '${type}', '${specialIndex}')" type="${type}" style="${format[type].style}">${selection}</sayas>`
         } //  spell-out（字母逐个读出）， number:digits（数字逐个读出），number:ordinal（数字按照数值发音）
 }
 
@@ -67,13 +67,13 @@ window.breaks = function(event, strength) {
         closeOnClickModal: false,
         showClose: false
     }).then(() => {
-        let html = document.querySelector('.exec').innerHTML
+        const html = document.querySelector('.exec').innerHTML
         const reg = `<break onclick="${event.getAttribute('onclick')}" strength="${strength}" style="${format[strength].style}">|</break>`
         document.querySelector('.exec').innerHTML = html.replace(reg, '')
 
-        let htmlTextNode = document.querySelector('.html-text')
-        let ssmlHtml = htmlTextNode.innerHTML
-        let regs = `&lt;break strength="${strength}"&gt;&lt;/break&gt;`
+        const htmlTextNode = document.querySelector('.html-text')
+        const ssmlHtml = htmlTextNode.innerHTML
+        const regs = `&lt;break strength="${strength}"&gt;&lt;/break&gt;`
         htmlTextNode.innerHTML = ssmlHtml.replace(regs, '')
     }).catch(() => {
         return false
@@ -113,8 +113,8 @@ window.ws = function(event, text) {
         const reg = `<w onclick="${event.getAttribute('onclick')}" style="${format.w.style}">${text}</w>`
         document.querySelector('.exec').innerHTML = html.replace(reg, text)
 
-        let ssmlHtml = document.querySelector('.html-text').innerHTML
-        let regs = `&lt;w&gt;${text}&lt;/w&gt;`
+        const ssmlHtml = document.querySelector('.html-text').innerHTML
+        const regs = `&lt;w&gt;${text}&lt;/w&gt;`
         document.querySelector('.html-text').innerHTML = ssmlHtml.replace(regs, text)
     }).catch(() => {
         return false
@@ -140,8 +140,8 @@ window.sayass = function(event, text, type) {
         const reg = `<sayas onclick="${event.getAttribute('onclick')}" type="${type}" style="${format[type].style}">${text}</sayas>`
         document.querySelector('.exec').innerHTML = html.replace(reg, text)
 
-        let ssmlHtml = document.querySelector('.html-text').innerHTML
-        let regs = `&lt;sayas type="${type}"&gt;${text}&lt;/sayas&gt;`
+        const ssmlHtml = document.querySelector('.html-text').innerHTML
+        const regs = `&lt;sayas type="${type}"&gt;${text}&lt;/sayas&gt;`
         document.querySelector('.html-text').innerHTML = ssmlHtml.replace(regs, text)
     }).catch(() => {
         return false

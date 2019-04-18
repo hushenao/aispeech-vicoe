@@ -133,7 +133,9 @@ export default {
         ssmltohtml: '', //
         text: '这是长命一个很不错的测试，现在我需要测试添加停顿，以及修改发音，设置连续，设置数字读取方式2019、2018和字母读取方式，是连读ABCD，还是单个读取abcd, 然后来进行一个反编译的过程',
         ssmlLen: 0, // ssml原数据的长度
-        breakIndex: 0 // 设置停顿的标识索引
+        breakIndex: 0, // 设置停顿的标识索引
+        wIndex: 0, // 设置连续的标识索引
+        specialIndex: 0, // 设置数字和字母的标识索引
       }
   },
   mounted() {
@@ -189,7 +191,8 @@ export default {
         })
         selection = htmls
       }
-      this.execCommand('insertHTML', false, Utils.status.w(selection))
+      this.wIndex++
+      this.execCommand('insertHTML', false, Utils.status.w(selection, this.wIndex++))
       const html = this.queryDom('.exec')
       this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
     },
@@ -296,7 +299,8 @@ export default {
     numbers (type) {
       const selection =this.querySelection().trim()
       if (!selection) return false
-      this.execCommand('insertHTML', false, Utils.status.sayas(selection, type))
+      this.specialIndex++
+      this.execCommand('insertHTML', false, Utils.status.sayas(selection, type, this.specialIndex))
 
       const html = this.queryDom('.exec')
       const htmlText = this.queryDom('.html-text')
@@ -308,7 +312,8 @@ export default {
     acronym (type) {
       const selection = this.querySelection()
       if (!selection) return false
-      let text = Utils.status.sayas(selection, type)
+      this.specialIndex++
+      let text = Utils.status.sayas(selection, type, this.specialIndex)
       this.execCommand('insertHTML', false, text)
 
       let html = this.queryDom('.exec')
