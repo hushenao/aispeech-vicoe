@@ -31,6 +31,7 @@
     letter-spacing: 3px;
     overflow-y: auto;
     overflow-x: hidden;
+    line-height: 22px;
 }
 
 .ssml-text {

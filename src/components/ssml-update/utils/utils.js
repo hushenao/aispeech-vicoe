@@ -52,7 +52,7 @@ export const status = {
     selectAll: () => 'selectAll',
     w: (selection) => `<w onclick="ws(this, '${selection}')" style="${format.w.style}">${selection}</w>`, // 设置连读
     phoneme: (selection, py = 'hao') => `<phoneme onclick="phonemes(this, '${selection}', '${py}')" py="${py}" style="${format.phoneme.style}">${selection}</phoneme>`, // 修改发音
-    break: (strength) => `<break onclick="breaks(this, '${strength}')" strength="${strength}" style="${format[strength].style}">|</break>`, // 添加停顿
+    break: (strength, indexs) => `<break onclick="breaks(this, '${strength}', '${indexs}')" strength="${strength}" style="${format[strength].style}">|</break>`, // 添加停顿
     sayas: (selection, type) => {
             return `<sayas onclick="sayass(this,'${selection}', '${type}')" type="${type}" style="${format[type].style}">${selection}</sayas>`
         } //  spell-out（字母逐个读出）， number:digits（数字逐个读出），number:ordinal（数字按照数值发音）
@@ -96,7 +96,7 @@ window.breaks = function(event, strength) {
 window.phonemes = function(event, text, py) {
     const selection = document.getSelection().toString()
     if (!selection || selection.length > 1) return false
-    Vue.prototype.$prompt(`修改(${text}-${py})发音`, '提示', {
+    Vue.prototype.$prompt(`修改“${text}(${py})”发音`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         closeOnClickModal: false,
@@ -121,7 +121,7 @@ window.phonemes = function(event, text, py) {
 }
 
 window.ws = function(event, text) {
-    Vue.prototype.$confirm('确认清除此连续', '提示', {
+    Vue.prototype.$confirm(`确认清除“${text}”此处连续`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
@@ -153,7 +153,14 @@ window.ws = function(event, text) {
 }
 
 window.sayass = function(event, text, type) {
-    Vue.prototype.$confirm('确认清除此数字和字符发音方式', '提示', {
+    let title = ''
+    if (type === format['number:digits'].type || type === format['number:ordinal'].type) {
+        title = `确认清除数字“${text}”的串读方式`
+    }
+    if (type === format['spell-out'].type || type === format['acronym'].type) {
+        title = `确认清除字母“${text}”的串读方式`
+    }
+    Vue.prototype.$confirm(title, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',

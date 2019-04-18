@@ -177,19 +177,18 @@ import Utils from '../utils';
 export default {
   data () {
     return {
-        centerDialogVisible: false,
-        active: '',
-        activeBreak: '',
-        activeW: '',
-        activeNumber: '',
-        activeSpellout: '',
-        activePhoneme: [],
-        content: '',
-        html: '',
-        htmlText: '',
-        ssmltohtml: '',
+        centerDialogVisible: false, // 控制dialog弹出框的状态
+        active: '', // 设置当前所处的编辑状态
+        activeBreak: '', // 设置停顿
+        activeW: '', // 设置连续
+        activeNumber: '', // 设置数字发音
+        activeSpellout: '', // 设置字母发言
+        activePhoneme: [], // 设置读音数组
+        htmlText: '', // 生成的ssml数据
+        ssmltohtml: '', //
         text: '这是长命一个很不错的测试，现在我需要测试添加停顿，以及修改发音，设置连续，设置数字读取方式2019、2018和字母读取方式，是连读ABCD，还是单个读取abcd, 然后来进行一个反编译的过程',
-        ssmlLen: 0,
+        ssmlLen: 0, // ssml原数据的长度
+        breakIndex: 0 // 设置停顿的标识索引
       }
   },
   mounted() {
@@ -307,7 +306,8 @@ export default {
     breaks (type) {
       const selection = this.querySelection()
       if (selection.trim()) return false
-      let text = Utils.status.break(type)
+      this.breakIndex++
+      let text = Utils.status.break(type, this.breakIndex)
       this.execCommand('insertHTML', false, text)
       const html = this.queryDom('.exec')
       this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))  // `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${Utils.replaceChat(html.innerHTML)}</speak>`
