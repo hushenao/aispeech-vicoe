@@ -43,7 +43,9 @@ export const format = {
         style: 'background-color: #24f422;',
         value: 'sayas',
         type: 'number:ordinal'
-    }
+    },
+    number: 'number',
+    spellout: 'spell-out'
 }
 
 export const status = {

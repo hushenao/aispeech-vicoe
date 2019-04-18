@@ -110,13 +110,6 @@
 </template>
 
 <script>
-const ACTIVE = {
-  break: 'break',
-  w: 'w',
-  phoneme: 'phoneme',
-  number: 'number',
-  spellout: 'spell-out'
-}
 const pinyin = require("pinyin");
 import Utils from '../utils';
 export default {
@@ -130,12 +123,12 @@ export default {
         activeSpellout: '', // 设置字母发言
         activePhoneme: [], // 设置读音数组
         htmlText: '', // 生成的ssml数据
-        ssmltohtml: '', //
+        ssmltohtml: '', // 反向生成html标签文档
         text: '这是长命一个很不错的测试，现在我需要测试添加停顿，以及修改发音，设置连续，设置数字读取方式2019、2018和字母读取方式，是连读ABCD，还是单个读取abcd, 然后来进行一个反编译的过程',
         ssmlLen: 0, // ssml原数据的长度
         breakIndex: 0, // 设置停顿的标识索引
         wIndex: 0, // 设置连续的标识索引
-        specialIndex: 0, // 设置数字和字母的标识索引
+        specialIndex: 0 // 设置数字和字母的标识索引
       }
   },
   mounted() {
@@ -347,11 +340,11 @@ export default {
         ev.stopPropagation() // 清除冒泡
         return false
       } else {
-        if (this.active === ACTIVE.break) {
+        if (this.active === Utils.format.strong.value) {
           if (selection.trim()) return false
           this.centerDialogVisible = true
         }
-        if (this.active === ACTIVE.phoneme) {
+        if (this.active === Utils.format.phoneme.value) {
           if (/[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
             // this.active = ''
             ev.preventDefault()
@@ -370,7 +363,7 @@ export default {
           }
           this.centerDialogVisible = true
         }
-        if (this.active === ACTIVE.w) {
+        if (this.active === Utils.format.w.value) {
           if (!selection || selection.trim().length < 2) return false
           this.activeW = selection
           if ( /[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
@@ -386,7 +379,7 @@ export default {
           }
           this.centerDialogVisible = true
         }
-        if (this.active === ACTIVE.number) {
+        if (this.active === Utils.format.number) {
           if (Utils.judgeNaN(selection.trim() * 1)) {
             // this.active = ''
             ev.preventDefault()
@@ -400,7 +393,7 @@ export default {
           }
           this.centerDialogVisible = true
         }
-        if (this.active === ACTIVE.spellout) {
+        if (this.active === Utils.format.spellout) {
           if (!Utils.IsEN(selection.trim())) {
             // this.active = ''
             ev.preventDefault()
