@@ -46,8 +46,8 @@ export const format = {
     },
     number: 'number',
     spellout: 'spell-out',
-    ssmlNode: '.html-text',
-    htmlNode: '.exec'
+    ssmlNode: '.html-text', // 显示ssml文本的dom
+    htmlNode: '.exec' // 能够编辑的dom
 }
 
 export const status = {
@@ -66,7 +66,6 @@ export const status = {
  * 设置停顿的取消交互方式
  */
 window.breaks = function(event, strength) {
-
     Vue.prototype.$confirm('确认删除停顿', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -139,7 +138,6 @@ window.ws = function(event, text) {
  * 设置数字和字母的取消交互方式
  */
 window.sayass = function(event, text, type) {
-    console.log(event)
     let title = ''
     if (type === format['number:digits'].type || type === format['number:ordinal'].type) {
         title = `确认清除数字“${text}”的串读方式`
@@ -165,9 +163,6 @@ window.sayass = function(event, text, type) {
         return false
     })
 }
-
-// 添加得节点类型
-export const Ctype = ['W', 'PHONEME', 'BREAK', 'SAYAS']
 
 /**
  * 判断是否为NAN
@@ -284,8 +279,10 @@ function getViewPortWidth() {
     return document.documentElement.clientWidth || document.body.clientWidth;
 }
 
-
-// 获取选中文本的位置
+/**
+ * 获取选中文本的位置
+ * @param {*} dom
+ */
 export function getPositions(dom) {  
     var el = dom  
     var startPosition = 0; //所选文本的开始位置     
@@ -309,7 +306,9 @@ export function getPositions(dom) {  
     }
 }
 
-// 获取选中文本的内容
+/**
+ * 获取选中文本的内容
+ */
 export function querySelectHtml() {
     let selectionObj = null,
         rangeObj = null;
@@ -319,8 +318,4 @@ export function querySelectHtml() {
     let tempDiv = document.createElement("div");
     tempDiv.appendChild(docFragment);
     return tempDiv.innerHTML;
-}
-
-export function clearReplace(html) {
-    return html.replace(/<span (.*)>(.*)<\/span>/ig, '')
 }
