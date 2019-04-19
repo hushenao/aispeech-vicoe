@@ -2,45 +2,45 @@ import Vue from 'vue';
 
 export const format = {
     w: {
-        style: 'background-color: #24f424;',
+        style: 'background-color: rgb(36, 244, 36);',
         value: 'w'
     },
     strong: {
-        style: 'font-size: 16px; color: #24f424; font-weight: 900; display: inline-block; height:20px; width: 10px; background-color: #24f425;',
+        style: 'font-size: 16px; color: rgb(36, 244, 36); font-weight: 900; display: inline-block; height:20px; width: 10px; background-color: rgb(36, 244, 37);',
         value: 'break',
         type: 'strong'
     },
     medium: {
-        style: 'font-size: 16px; color: #24f424; font-weight: 900; display: inline-block; height:20px; width: 7px; background-color: #24f425;',
+        style: 'font-size: 16px; color: rgb(36, 244, 36); font-weight: 900; display: inline-block; height:20px; width: 7px; background-color: rgb(36, 244, 37);',
         value: 'break',
         type: 'medium'
     },
     weak: {
-        style: 'font-size: 16px; color: #24f424; font-weight: 900; display: inline-block; height:20px; width: 5px; background-color: #24f425;',
+        style: 'font-size: 16px; color: rgb(36, 244, 36); font-weight: 900; display: inline-block; height:20px; width: 5px; background-color: rgb(36, 244, 37);',
         value: 'break',
         type: 'weak'
     },
     phoneme: {
-        style: 'background-color: #24f425; border-radius: 50%;',
+        style: 'background-color: rgb(36, 244, 37); border-radius: 50%;',
         value: 'phoneme'
     },
     'spell-out': {
-        style: 'background-color: #24f426;',
+        style: 'background-color: rgb(36, 244, 38);',
         value: 'sayas',
         type: 'spell-out'
     },
     acronym: {
-        style: 'background-color: #24f427;',
+        style: 'background-color: rgb(36, 244, 39);',
         value: 'sayas',
         type: 'acronym'
     },
     'number:digits': {
-        style: 'background-color: #24f423;',
+        style: 'background-color: rgb(36, 244, 35);',
         value: 'sayas',
         type: 'number:digits'
     },
     'number:ordinal': {
-        style: 'background-color: #24f422;',
+        style: 'background-color: rgb(36, 244, 34);',
         value: 'sayas',
         type: 'number:ordinal'
     },
@@ -52,15 +52,18 @@ export const status = {
     undo: () => 'undo',
     removeFormat: () => 'removeFormat',
     selectAll: () => 'selectAll',
-    w: (selection, wIndex) => `<w onclick="ws(this, '${selection}', '${wIndex}')" style="${format.w.style}">${selection}</w>`, // 设置连读
-    phoneme: (selection, py = 'hao') => `<phoneme onclick="phonemes(this, '${selection}', '${py}')" py="${py}" style="${format.phoneme.style}">${selection}</phoneme>`, // 修改发音
-    break: (strength, indexs) => `<break onclick="breaks(this, '${strength}', '${indexs}')" strength="${strength}" style="${format[strength].style}">|</break>`, // 添加停顿
+    w: (selection, wIndex) => `<w contenteditable="false" onclick="ws(this, '${selection}', '${wIndex}')" style="${format.w.style}">${selection}</w>`, // 设置连读
+    phoneme: (selection, py = 'hao') => `<phoneme contenteditable="false" onclick="phonemes(this, '${selection}', '${py}')" py="${py}" style="${format.phoneme.style}">${selection}</phoneme>`, // 修改发音
+    break: (strength, indexs) => `<break contenteditable="false" onclick="breaks(this, '${strength}', '${indexs}')" strength="${strength}" style="${format[strength].style}">|</break>`, // 添加停顿
     sayas: (selection, type, specialIndex) => {
-            return `<sayas onclick="sayass(this,'${selection}', '${type}', '${specialIndex}')" type="${type}" style="${format[type].style}">${selection}</sayas>`
+            return `<sayas contenteditable="false" onclick="sayass(this,'${selection}', '${type}', '${specialIndex}')" type="${type}" style="${format[type].style}">${selection}</sayas>`
         } //  spell-out（字母逐个读出）， number:digits（数字逐个读出），number:ordinal（数字按照数值发音）
 }
 
-//设置全局得 break 方法
+
+/**
+ * 设置停顿的取消交互方式
+ */
 window.breaks = function(event, strength) {
     Vue.prototype.$confirm('确认删除停顿', '提示', {
         confirmButtonText: '确定',
@@ -70,7 +73,7 @@ window.breaks = function(event, strength) {
         showClose: false
     }).then(() => {
         const html = document.querySelector('.exec').innerHTML
-        const reg = `<break onclick="${event.getAttribute('onclick')}" strength="${strength}" style="${format[strength].style}">|</break>`
+        const reg = `<break contenteditable="false" onclick="${event.getAttribute('onclick')}" strength="${strength}" style="${format[strength].style}">|</break>`
         document.querySelector('.exec').innerHTML = html.replace(reg, '')
 
         const htmlTextNode = document.querySelector('.html-text')
@@ -82,12 +85,16 @@ window.breaks = function(event, strength) {
     })
 }
 
+/**
+ * 设置读音取消的交互方式
+ */
 window.phonemes = function(event, text, py) {
     const selection = document.getSelection().toString()
     if (!selection || selection.length > 1) return false
     Vue.prototype.$prompt(`修改“${text}(${py})”发音`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        inputValue: py,
         closeOnClickModal: false,
         showClose: false,
         inputPattern: /^[a-z]{1,}[1-5]{1}$/,
@@ -103,6 +110,9 @@ window.phonemes = function(event, text, py) {
     })
 }
 
+/**
+ * 设置连续取消的交互方式
+ */
 window.ws = function(event, text) {
     Vue.prototype.$confirm(`确认清除“${text}”此处连续`, '提示', {
         confirmButtonText: '确定',
@@ -112,7 +122,7 @@ window.ws = function(event, text) {
         showClose: false
     }).then(() => {
         const html = document.querySelector('.exec').innerHTML
-        const reg = `<w onclick="${event.getAttribute('onclick')}" style="${format.w.style}">${text}</w>`
+        const reg = `<w contenteditable="false" onclick="${event.getAttribute('onclick')}" style="${format.w.style}">${text}</w>`
         document.querySelector('.exec').innerHTML = html.replace(reg, text)
 
         const ssmlHtml = document.querySelector('.html-text').innerHTML
@@ -123,6 +133,9 @@ window.ws = function(event, text) {
     })
 }
 
+/**
+ * 设置数字和字母的取消交互方式
+ */
 window.sayass = function(event, text, type) {
     let title = ''
     if (type === format['number:digits'].type || type === format['number:ordinal'].type) {
@@ -139,7 +152,7 @@ window.sayass = function(event, text, type) {
         showClose: false
     }).then(() => {
         const html = document.querySelector('.exec').innerHTML
-        const reg = `<sayas onclick="${event.getAttribute('onclick')}" type="${type}" style="${format[type].style}">${text}</sayas>`
+        const reg = `<sayas contenteditable="false" onclick="${event.getAttribute('onclick')}" type="${type}" style="${format[type].style}">${text}</sayas>`
         document.querySelector('.exec').innerHTML = html.replace(reg, text)
 
         const ssmlHtml = document.querySelector('.html-text').innerHTML
@@ -175,18 +188,19 @@ export function IsEN(value) {
  * @param {匹配替换} html
  */
 export function replaceChat(html) {
+    console.log(html)
     html = JSON.parse(JSON.stringify(html))
         .replace(/ data-(.*)=""/ig, '')
-        .replace(/<span style="background-color: #24f424;">(.*)<\/span>/ig, `<w>$1</w>`)
-        .replace(/<span style="background-color: #24f423;">(.*)<\/span>/ig, '<sayas type="number:digits">$1</sayas>')
-        .replace(/<span style="background-color: #24f422;">(.*)<\/span>/ig, '<sayas type="number:ordinal">$1</sayas>')
-        .replace(/<span style="background-color: #24f426;">(.*)<\/span>/ig, '<sayas type="spell-out">$1</sayas>')
-        .replace(/<span style="background-color: #24f427;">(.*)<\/span>/ig, '<sayas type="acronym">$1</sayas>')
+        .replace(/<span style="background-color: rgb(36, 244, 36);">(.*)<\/span>/ig, `<w>$1</w>`)
+        .replace(/<span style="background-color: rgb(36, 244, 35);">(.*)<\/span>/ig, '<sayas type="number:digits">$1</sayas>')
+        .replace(/<span style="background-color: rgb(36, 244, 34);">(.*)<\/span>/ig, '<sayas type="number:ordinal">$1</sayas>')
+        .replace(/<span style="background-color: rgb(36, 244, 38);">(.*)<\/span>/ig, '<sayas type="spell-out">$1</sayas>')
+        .replace(/<span style="background-color: rgb(36, 244, 39);">(.*)<\/span>/ig, '<sayas type="acronym">$1</sayas>')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
-        .replace(/<span style="font-size: 16px; color: #24f424; font-weight: 900; display: inline-block; height:20px; width: 10px; background-color: #24f425;">\|<\/span>?/ig, '<break strength="strong"></break>')
-        .replace(/<span style="font-size: 16px; color: #24f424; font-weight: 900; display: inline-block; height:20px; width: 10px; background-color: #24f425;">\|<\/span>?/ig, '<break strength="medium"></break>')
-        .replace(/<span style="font-size: 16px; color: #24f424; font-weight: 900; display: inline-block; height:20px; width: 10px; background-color: #24f425;">\|<\/span>?/ig, '<break strength="weak"></break>')
+        .replace(/<span style="font-size: 16px; color: rgb(36, 244, 36); font-weight: 900; display: inline-block; height:20px; width: 10px; background-color: rgb(36, 244, 37);">\|<\/span>?/ig, '<break strength="strong"></break>')
+        .replace(/<span style="font-size: 16px; color: rgb(36, 244, 36); font-weight: 900; display: inline-block; height:20px; width: 10px; background-color: rgb(36, 244, 37);">\|<\/span>?/ig, '<break strength="medium"></break>')
+        .replace(/<span style="font-size: 16px; color: rgb(36, 244, 36); font-weight: 900; display: inline-block; height:20px; width: 10px; background-color: rgb(36, 244, 37);">\|<\/span>?/ig, '<break strength="weak"></break>')
         .replace(/\|/g, '')
         .replace(/&nbsp;/ig, '')
         .replace(/ style="[^=>]*"([(\s+\w+=)|>])/ig, '$1')
@@ -195,10 +209,10 @@ export function replaceChat(html) {
         .replace(/ onclick="(.*?)"/ig, '')
         .replace(/(<.*?)class\s*=.*?(\w+\s*=|\s*>)/ig, '$1$2')
         .replace(/<break>/ig, '')
-        // .replace(/<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">(.*)<\/speak>/ig, '$1')
+        .replace(/ contenteditable="false"/ig, '')
+        .replace(/<span>(.*?)<\/span>/ig, '')
 
-    //return `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${html}</speak>`
-    return `${html}`
+    return html
 }
 
 /**
@@ -272,18 +286,12 @@ function getViewPortWidth() {
 // 获取选中文本的位置
 export function getPositions(dom) {  
     var el = dom  
-    var startPosition = 0; //所选文本的开始位置
-      
+    var startPosition = 0; //所选文本的开始位置     
     var endPosition = 0; //所选文本的结束位置
-      
-    if (document.selection) {     //IE
-            
-        var range = document.selection.createRange(); //创建范围对象
-            
+    if (document.selection) {     //IE    
+        var range = document.selection.createRange(); //创建范围对象     
         var drange = range.duplicate(); //克隆对象
-            
-        drange.moveToElementText(el); //复制范围
-            
+        drange.moveToElementText(el); //复制范围 
         drange.setEndPoint('EndToEnd', range);    
         startPosition = drange.text.length - range.text.length;    
         endPosition = startPosition + range.text.length;  

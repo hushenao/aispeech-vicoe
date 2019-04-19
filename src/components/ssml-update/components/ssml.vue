@@ -144,11 +144,12 @@ export default {
             htmls.innerText = htmls.innerText.substring(0, 5000)
           }
 
-          that.htmlText = Utils.replaceChat(htmls.innerHTML)
-          that.ssmltohtml = Utils.HtmlToSsml(that.htmlText)
+          // that.htmlText = Utils.replaceChat(htmls.innerHTML)
+          // that.ssmltohtml = Utils.HtmlToSsml(that.htmlText)
 
-          that.htmlText = that.comm(that.htmlText)
-          document.querySelector('.html-text').innerText = that.comm(Utils.replaceChat(that.ssmltohtml))
+          that.htmlText = that.comm(Utils.replaceChat(htmls.innerHTML))
+          // clearReplce
+          document.querySelector('.html-text').innerText = that.comm(Utils.replaceChat(that.htmlText))
         }
       });
       that.htmlText = that.comm(Utils.replaceChat(htmls.innerHTML))
@@ -175,21 +176,12 @@ export default {
         })
         return false
       }
-      let parentNode = this.querySelection(true).focusNode.parentNode
-      if (parentNode.nodeName === 'PHONEME') {
-        let selectArr = selection.replace(/\s/g, "").split('')
-        let htmls = ''
-        selectArr.forEach((item, index) => {
-          htmls += `<phoneme py=${pinyin(item, {
-            style: pinyin.STYLE_TONE2
-          })}>${item}</phoneme>`
-        })
-        selection = htmls
-      }
       this.wIndex++
+      console.log("w生成的html", selection)
       this.execCommand('insertHTML', false, Utils.status.w(selection, this.wIndex++))
       const html = this.queryDom('.exec')
-      this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
+      // this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
+
     },
     toPhoneme (active) {
       this.active = active
@@ -199,7 +191,7 @@ export default {
       if (!selection || selection.indexOf('|') !== -1) return false
       if (/[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
         this.active = ''
-        this.$alert('选中的文字中不能包含字符串和数字', '警告', {
+        this.$alert('选中的文字中不能包含字符串、数字和嵌套标签', '警告', {
           confirmButtonText: '取消',
           type: 'warning'
         })
@@ -213,9 +205,10 @@ export default {
       this.activePhoneme.forEach(item => {
         htmls += Utils.status.phoneme(item.value, `${item.pinvalue}${item.tonevalue}`)
       })
-      this.execCommand('insertHTML', false, htmls)
+      console.log("ph生成的html", this.activePhoneme, htmls)
       const html = this.queryDom('.exec')
-      this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
+      this.execCommand('insertHTML', false, htmls)
+      // this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
 
     },
     queryDom (dom) {
@@ -244,7 +237,7 @@ export default {
        const htmls = this.queryDom('.exec')
        htmls.innerHTML = ''
        this.htmlText = ''
-       this.ssmltohtml = Utils.HtmlToSsml(this.htmlText)
+       // this.ssmltohtml = Utils.HtmlToSsml(this.htmlText)
     },
     // 切换状态
     exchange (active) {
@@ -257,7 +250,7 @@ export default {
       let text = Utils.status.break(type, this.breakIndex)
       this.execCommand('insertHTML', false, text)
       const html = this.queryDom('.exec')
-      this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))  // `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${Utils.replaceChat(html.innerHTML)}</speak>`
+      this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
       this.hiedDiv()
     },
     phoneme () {
@@ -303,7 +296,7 @@ export default {
       const htmlText = this.queryDom('.html-text')
       // this.htmlText = Utils.replaceChat(html.innerHTML)
       // this.ssmltohtml = Utils.HtmlToSsml(this.htmlText)
-      htmlText.innerText = this.comm(Utils.replaceChat(html.innerHTML)) //  `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${this.htmlText}</speak>`
+      // htmlText.innerText = this.comm(Utils.replaceChat(html.innerHTML))
       this.hiedDiv()
     },
     acronym (type) {
@@ -316,7 +309,7 @@ export default {
       let html = this.queryDom('.exec')
       const htmlText = this.queryDom('.html-text')
       // this.htmlText = Utils.replaceChat(html.innerHTML)
-      htmlText.innerText = this.comm(Utils.replaceChat(html.innerHTML)) //  `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${this.htmlText}</speak>`
+      // htmlText.innerText = this.comm(Utils.replaceChat(html.innerHTML))
       this.hiedDiv()
     },
     // 撤销最近指定的命令
@@ -332,7 +325,7 @@ export default {
       const html = this.queryDom('.exec')
       html.innerHTML = Utils.formatClear(html.innerHTML)
       this.htmlText = Utils.replaceChat(html.innerHTML)
-      this.ssmltohtml = Utils.HtmlToSsml(this.htmlText)
+      // this.ssmltohtml = Utils.HtmlToSsml(this.htmlText)
     },
     // 鼠标右击事件
     mousedown (ev) {
@@ -356,7 +349,6 @@ export default {
             this.$alert('选中的文字中不能包含字符串和数字', '警告', {
               confirmButtonText: '取消'
             })
-            // alert('选中的文字中不能包含字符串和数字')
             return false
           }
           this.activePhoneme = selection.replace(/\s/g, "").split('')
@@ -378,7 +370,6 @@ export default {
               confirmButtonText: '取消',
               type: 'warning'
             })
-            // alert('选中的文字中不能包含字符串和数字');
             return false
           }
           this.centerDialogVisible = true
@@ -392,7 +383,6 @@ export default {
               confirmButtonText: '取消',
               type: 'warning'
             })
-            // alert('选中的不是数字');
             return false
           }
           this.centerDialogVisible = true
@@ -406,7 +396,6 @@ export default {
               confirmButtonText: '取消',
               type: 'warning'
             })
-            // alert('选中的不是字符')
             return false;
           }
           this.centerDialogVisible = true
