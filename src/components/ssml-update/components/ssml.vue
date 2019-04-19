@@ -124,7 +124,8 @@ export default {
         activePhoneme: [], // 设置读音数组
         htmlText: '', // 生成的ssml数据
         ssmltohtml: '', // 反向生成html标签文档
-        text: '这是长命一个很不错的测试，现在我需要测试添加停顿，以及修改发音，设置连续，设置数字读取方式2019、2018和字母读取方式，是连读ABCD，还是单个读取abcd, 然后来进行一个反编译的过程',
+        text: '',
+        // 这是长命一个很不错的测试，现在我需要测试添加停顿，以及修改发音，设置连续，设置数字读取方式2019、2018和字母读取方式，是连读ABCD，还是单个读取abcd,然后来进行一个反编译的过程
         ssmlLen: 0, // ssml原数据的长度
         breakIndex: 0, // 设置停顿的标识索引
         wIndex: 0, // 设置连续的标识索引
@@ -143,19 +144,25 @@ export default {
           if (htmls.innerText.length > 5000) {
             htmls.innerText = htmls.innerText.substring(0, 5000)
           }
+          that.htmlText = Utils.replaceChat(htmls.innerHTML)
+          that.htmlText = that.comm(that.htmlText)
+          document.querySelector('.html-text').innerText = that.comm(Utils.replaceChat(htmls.innerHTML))
 
-          // that.htmlText = Utils.replaceChat(htmls.innerHTML)
+          // htmls.innerHTML = Utils.clearReplace(htmls.innerHTML)
           // that.ssmltohtml = Utils.HtmlToSsml(that.htmlText)
-
-          that.htmlText = that.comm(Utils.replaceChat(htmls.innerHTML))
-          // clearReplce
-          document.querySelector('.html-text').innerText = that.comm(Utils.replaceChat(that.htmlText))
+          // htmls.innerHTML = Utils.clearReplace(htmls.innerHTML)
         }
       });
       that.htmlText = that.comm(Utils.replaceChat(htmls.innerHTML))
     })
   },
   methods: {
+    setAttributeNode (node) {
+      const len = node.length
+      for (let i = 0; i < len; i++) {
+        node[i].setAttribute('contenteditable', false)
+      }
+    },
     comm (text) {
       return `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${text}</speak>`
     },
@@ -181,6 +188,7 @@ export default {
       this.execCommand('insertHTML', false, Utils.status.w(selection, this.wIndex++))
       const html = this.queryDom('.exec')
       // this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
+      this.setAttributeNode(document.querySelectorAll('w'))
 
     },
     toPhoneme (active) {
@@ -209,7 +217,7 @@ export default {
       const html = this.queryDom('.exec')
       this.execCommand('insertHTML', false, htmls)
       // this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
-
+      this.setAttributeNode(document.querySelectorAll('phoneme'))
     },
     queryDom (dom) {
       return document.querySelector(dom)
@@ -252,6 +260,7 @@ export default {
       const html = this.queryDom('.exec')
       this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
       this.hiedDiv()
+      this.setAttributeNode(document.querySelectorAll('break'))
     },
     phoneme () {
       const selection = this.querySelection()
@@ -298,6 +307,7 @@ export default {
       // this.ssmltohtml = Utils.HtmlToSsml(this.htmlText)
       // htmlText.innerText = this.comm(Utils.replaceChat(html.innerHTML))
       this.hiedDiv()
+      this.setAttributeNode(document.querySelectorAll('sayas'))
     },
     acronym (type) {
       const selection = this.querySelection()
@@ -311,6 +321,7 @@ export default {
       // this.htmlText = Utils.replaceChat(html.innerHTML)
       // htmlText.innerText = this.comm(Utils.replaceChat(html.innerHTML))
       this.hiedDiv()
+      this.setAttributeNode(document.querySelectorAll('sayas'))
     },
     // 撤销最近指定的命令
     undo () {
@@ -375,6 +386,7 @@ export default {
           this.centerDialogVisible = true
         }
         if (this.active === Utils.format.number) {
+          if (!selection) return false
           if (Utils.judgeNaN(selection.trim() * 1)) {
             // this.active = ''
             ev.preventDefault()
@@ -388,6 +400,7 @@ export default {
           this.centerDialogVisible = true
         }
         if (this.active === Utils.format.spellout) {
+          if (!selection) return false
           if (!Utils.IsEN(selection.trim())) {
             // this.active = ''
             ev.preventDefault()

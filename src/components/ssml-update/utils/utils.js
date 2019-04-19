@@ -52,19 +52,19 @@ export const status = {
     undo: () => 'undo',
     removeFormat: () => 'removeFormat',
     selectAll: () => 'selectAll',
-    w: (selection, wIndex) => `<w contenteditable="false" onclick="ws(this, '${selection}', '${wIndex}')" style="${format.w.style}">${selection}</w>`, // 设置连读
-    phoneme: (selection, py = 'hao') => `<phoneme contenteditable="false" onclick="phonemes(this, '${selection}', '${py}')" py="${py}" style="${format.phoneme.style}">${selection}</phoneme>`, // 修改发音
-    break: (strength, indexs) => `<break contenteditable="false" onclick="breaks(this, '${strength}', '${indexs}')" strength="${strength}" style="${format[strength].style}">|</break>`, // 添加停顿
+    w: (selection, wIndex) => `<w onclick="ws(this, '${selection}', '${wIndex}')" style="${format.w.style}">${selection}</w>`, // 设置连读
+    phoneme: (selection, py = 'hao') => `<phoneme onclick="phonemes(this, '${selection}', '${py}')" py="${py}" style="${format.phoneme.style}">${selection}</phoneme>`, // 修改发音
+    break: (strength, indexs) => `<break onclick="breaks(this, '${strength}', '${indexs}')" strength="${strength}" style="${format[strength].style}">|</break>`, // 添加停顿
     sayas: (selection, type, specialIndex) => {
-            return `<sayas contenteditable="false" onclick="sayass(this,'${selection}', '${type}', '${specialIndex}')" type="${type}" style="${format[type].style}">${selection}</sayas>`
-        } //  spell-out（字母逐个读出）， number:digits（数字逐个读出），number:ordinal（数字按照数值发音）
+        return `<sayas onclick="sayass(this,'${selection}', '${type}', '${specialIndex}')" type="${type}" style="${format[type].style}">${selection}</sayas>`
+    }
 }
-
 
 /**
  * 设置停顿的取消交互方式
  */
 window.breaks = function(event, strength) {
+
     Vue.prototype.$confirm('确认删除停顿', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -73,8 +73,8 @@ window.breaks = function(event, strength) {
         showClose: false
     }).then(() => {
         const html = document.querySelector('.exec').innerHTML
-        const reg = `<break contenteditable="false" onclick="${event.getAttribute('onclick')}" strength="${strength}" style="${format[strength].style}">|</break>`
-        document.querySelector('.exec').innerHTML = html.replace(reg, '')
+            // const reg = `<break contenteditable="false" onclick="${event.getAttribute('onclick')}" strength="${strength}" style="${format[strength].style}" contenteditable="false">|</break>`
+        document.querySelector('.exec').innerHTML = html.replace(event.outerHTML, '')
 
         const htmlTextNode = document.querySelector('.html-text')
         const ssmlHtml = htmlTextNode.innerHTML
@@ -122,8 +122,8 @@ window.ws = function(event, text) {
         showClose: false
     }).then(() => {
         const html = document.querySelector('.exec').innerHTML
-        const reg = `<w contenteditable="false" onclick="${event.getAttribute('onclick')}" style="${format.w.style}">${text}</w>`
-        document.querySelector('.exec').innerHTML = html.replace(reg, text)
+            // const reg = `<w onclick="${event.getAttribute('onclick')}" style="${format.w.style}" contenteditable="false">${text}</w>`
+        document.querySelector('.exec').innerHTML = html.replace(event.outerHTML, text)
 
         const ssmlHtml = document.querySelector('.html-text').innerHTML
         const regs = `&lt;w&gt;${text}&lt;/w&gt;`
@@ -137,6 +137,7 @@ window.ws = function(event, text) {
  * 设置数字和字母的取消交互方式
  */
 window.sayass = function(event, text, type) {
+    console.log(event)
     let title = ''
     if (type === format['number:digits'].type || type === format['number:ordinal'].type) {
         title = `确认清除数字“${text}”的串读方式`
@@ -152,8 +153,8 @@ window.sayass = function(event, text, type) {
         showClose: false
     }).then(() => {
         const html = document.querySelector('.exec').innerHTML
-        const reg = `<sayas contenteditable="false" onclick="${event.getAttribute('onclick')}" type="${type}" style="${format[type].style}">${text}</sayas>`
-        document.querySelector('.exec').innerHTML = html.replace(reg, text)
+            // const reg = `<sayas onclick="${event.getAttribute('onclick')}" type="${type}" style="${format[type].style}" contenteditable="false">${text}</sayas>`
+        document.querySelector('.exec').innerHTML = html.replace(event.outerHTML, text)
 
         const ssmlHtml = document.querySelector('.html-text').innerHTML
         const regs = `&lt;sayas type="${type}"&gt;${text}&lt;/sayas&gt;`
@@ -317,4 +318,8 @@ export function querySelectHtml() {
     let tempDiv = document.createElement("div");
     tempDiv.appendChild(docFragment);
     return tempDiv.innerHTML;
+}
+
+export function clearReplace(html) {
+    return html.replace(/<span (.*)>(.*)<\/span>/ig, '')
 }

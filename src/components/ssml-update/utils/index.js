@@ -8,7 +8,8 @@ import {
     HtmlToSsml,
     customContext,
     getPositions,
-    querySelectHtml
+    querySelectHtml,
+    clearReplace
 } from './utils'
 
 export default {
@@ -21,5 +22,6 @@ export default {
     HtmlToSsml,
     customContext,
     getPositions,
-    querySelectHtml
+    querySelectHtml,
+    clearReplace
 }
