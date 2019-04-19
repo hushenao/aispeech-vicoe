@@ -191,7 +191,6 @@ export function IsEN(value) {
  * @param {匹配替换} html
  */
 export function replaceChat(html) {
-    console.log(html)
     html = JSON.parse(JSON.stringify(html))
         .replace(/ data-(.*)=""/ig, '')
         .replace(/<span style="background-color: rgb(36, 244, 36);">(.*)<\/span>/ig, `<w>$1</w>`)
