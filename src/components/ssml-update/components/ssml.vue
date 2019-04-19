@@ -164,6 +164,7 @@ export default {
     toW (active) {
       this.active = active
       let selection = this.querySelection()
+      if (Utils.querySelectHtml().indexOf('</w>') !== -1) return false
       if (Utils.querySelectHtml().indexOf('</phoneme>') !== -1) return false
       if (!selection || selection.trim().length < 2 || selection.indexOf('|') !== -1) return false
       if (/[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
@@ -193,6 +194,7 @@ export default {
     toPhoneme (active) {
       this.active = active
       const selection = this.querySelection()
+      if (Utils.querySelectHtml().indexOf('</phoneme>') !== -1) return false
       if (Utils.querySelectHtml().indexOf('</w>') !== -1) return false
       if (!selection || selection.indexOf('|') !== -1) return false
       if (/[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
