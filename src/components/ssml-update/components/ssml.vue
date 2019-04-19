@@ -135,7 +135,7 @@ export default {
   mounted() {
     let that = this
     this.$nextTick(() => {
-      const htmls = this.queryDom('.exec')
+      const htmls = this.queryDom(Utils.format.htmlNode)
       that.ssmlLen = htmls.innerText.length
       // 文本内容改变事件
       htmls.addEventListener('input', function(){
@@ -146,7 +146,7 @@ export default {
           }
           that.htmlText = Utils.replaceChat(htmls.innerHTML)
           that.htmlText = that.comm(that.htmlText)
-          document.querySelector('.html-text').innerText = that.comm(Utils.replaceChat(htmls.innerHTML))
+          document.querySelector(Utils.format.ssmlNode).innerText = that.comm(Utils.replaceChat(htmls.innerHTML))
 
           // htmls.innerHTML = Utils.clearReplace(htmls.innerHTML)
           // that.ssmltohtml = Utils.HtmlToSsml(that.htmlText)
@@ -186,7 +186,7 @@ export default {
       this.wIndex++
       console.log("w生成的html", selection)
       this.execCommand('insertHTML', false, Utils.status.w(selection, this.wIndex++))
-      const html = this.queryDom('.exec')
+      const html = this.queryDom(Utils.format.htmlNode)
       // this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
       this.setAttributeNode(document.querySelectorAll('w'))
 
@@ -214,7 +214,7 @@ export default {
         htmls += Utils.status.phoneme(item.value, `${item.pinvalue}${item.tonevalue}`)
       })
       console.log("ph生成的html", this.activePhoneme, htmls)
-      const html = this.queryDom('.exec')
+      const html = this.queryDom(Utils.format.htmlNode)
       this.execCommand('insertHTML', false, htmls)
       // this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
       this.setAttributeNode(document.querySelectorAll('phoneme'))
@@ -242,7 +242,7 @@ export default {
     },
     // 删除
     del () {
-       const htmls = this.queryDom('.exec')
+       const htmls = this.queryDom(Utils.format.htmlNode)
        htmls.innerHTML = ''
        this.htmlText = ''
        // this.ssmltohtml = Utils.HtmlToSsml(this.htmlText)
@@ -257,7 +257,7 @@ export default {
       this.breakIndex++
       let text = Utils.status.break(type, this.breakIndex)
       this.execCommand('insertHTML', false, text)
-      const html = this.queryDom('.exec')
+      const html = this.queryDom(Utils.format.htmlNode)
       this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
       this.hiedDiv()
       this.setAttributeNode(document.querySelectorAll('break'))
@@ -271,7 +271,7 @@ export default {
         htmls += Utils.status.phoneme(item.value, `${item.pinvalue}${item.tonevalue}`)
       })
       this.execCommand('insertHTML', false, htmls)
-      const html = this.queryDom('.exec')
+      const html = this.queryDom(Utils.format.htmlNode)
       this.htmlText = Utils.replaceChat(html.innerHTML)
       this.hiedDiv()
     },
@@ -291,7 +291,7 @@ export default {
         selection = htmls
       }
       this.execCommand('insertHTML', false, Utils.status.w(selection))
-      const html = this.queryDom('.exec')
+      const html = this.queryDom(Utils.format.htmlNode)
       this.htmlText = Utils.replaceChat(html.innerHTML)
       this.hiedDiv()
     },
@@ -301,8 +301,8 @@ export default {
       this.specialIndex++
       this.execCommand('insertHTML', false, Utils.status.sayas(selection, type, this.specialIndex))
 
-      const html = this.queryDom('.exec')
-      const htmlText = this.queryDom('.html-text')
+      const html = this.queryDom(Utils.format.htmlNode)
+      const htmlText = this.queryDom(Utils.format.ssmlNode)
       // this.htmlText = Utils.replaceChat(html.innerHTML)
       // this.ssmltohtml = Utils.HtmlToSsml(this.htmlText)
       // htmlText.innerText = this.comm(Utils.replaceChat(html.innerHTML))
@@ -316,8 +316,8 @@ export default {
       let text = Utils.status.sayas(selection, type, this.specialIndex)
       this.execCommand('insertHTML', false, text)
 
-      let html = this.queryDom('.exec')
-      const htmlText = this.queryDom('.html-text')
+      let html = this.queryDom(Utils.format.htmlNode)
+      const htmlText = this.queryDom(Utils.format.ssmlNode)
       // this.htmlText = Utils.replaceChat(html.innerHTML)
       // htmlText.innerText = this.comm(Utils.replaceChat(html.innerHTML))
       this.hiedDiv()
@@ -326,7 +326,7 @@ export default {
     // 撤销最近指定的命令
     undo () {
       this.execCommand(Utils.status.undo())
-      const html = this.queryDom('.exec')
+      const html = this.queryDom(Utils.format.htmlNode)
       this.htmlText = Utils.replaceChat(html.innerHTML)
     },
     // 清除样式 可以用于清除复制粘贴过来的文本的格式
@@ -342,7 +342,7 @@ export default {
     mousedown (ev) {
       ev.preventDefault();
       const customContextMenu = this.queryDom('#customContextMenu')
-      const html = this.queryDom('.exec')
+      const html = this.queryDom(Utils.format.htmlNode)
       let selection = this.querySelection()
       if (!this.active) {
         ev.stopPropagation() // 清除冒泡

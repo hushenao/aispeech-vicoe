@@ -45,7 +45,9 @@ export const format = {
         type: 'number:ordinal'
     },
     number: 'number',
-    spellout: 'spell-out'
+    spellout: 'spell-out',
+    ssmlNode: '.html-text',
+    htmlNode: '.exec'
 }
 
 export const status = {
@@ -72,11 +74,11 @@ window.breaks = function(event, strength) {
         closeOnClickModal: false,
         showClose: false
     }).then(() => {
-        const html = document.querySelector('.exec').innerHTML
+        const html = document.querySelector(format.htmlNode).innerHTML
             // const reg = `<break contenteditable="false" onclick="${event.getAttribute('onclick')}" strength="${strength}" style="${format[strength].style}" contenteditable="false">|</break>`
-        document.querySelector('.exec').innerHTML = html.replace(event.outerHTML, '')
+        document.querySelector(format.htmlNode).innerHTML = html.replace(event.outerHTML, '')
 
-        const htmlTextNode = document.querySelector('.html-text')
+        const htmlTextNode = document.querySelector(format.ssmlNode)
         const ssmlHtml = htmlTextNode.innerHTML
         const regs = `&lt;break strength="${strength}"&gt;&lt;/break&gt;`
         htmlTextNode.innerHTML = ssmlHtml.replace(regs, '')
@@ -121,13 +123,13 @@ window.ws = function(event, text) {
         closeOnClickModal: false,
         showClose: false
     }).then(() => {
-        const html = document.querySelector('.exec').innerHTML
+        const html = document.querySelector(format.htmlNode).innerHTML
             // const reg = `<w onclick="${event.getAttribute('onclick')}" style="${format.w.style}" contenteditable="false">${text}</w>`
-        document.querySelector('.exec').innerHTML = html.replace(event.outerHTML, text)
+        document.querySelector(format.htmlNode).innerHTML = html.replace(event.outerHTML, text)
 
-        const ssmlHtml = document.querySelector('.html-text').innerHTML
+        const ssmlHtml = document.querySelector(format.ssmlNode).innerHTML
         const regs = `&lt;w&gt;${text}&lt;/w&gt;`
-        document.querySelector('.html-text').innerHTML = ssmlHtml.replace(regs, text)
+        document.querySelector(format.ssmlNode).innerHTML = ssmlHtml.replace(regs, text)
     }).catch(() => {
         return false
     })
@@ -152,13 +154,13 @@ window.sayass = function(event, text, type) {
         closeOnClickModal: false,
         showClose: false
     }).then(() => {
-        const html = document.querySelector('.exec').innerHTML
+        const html = document.querySelector(format.htmlNode).innerHTML
             // const reg = `<sayas onclick="${event.getAttribute('onclick')}" type="${type}" style="${format[type].style}" contenteditable="false">${text}</sayas>`
-        document.querySelector('.exec').innerHTML = html.replace(event.outerHTML, text)
+        document.querySelector(format.htmlNode).innerHTML = html.replace(event.outerHTML, text)
 
-        const ssmlHtml = document.querySelector('.html-text').innerHTML
+        const ssmlHtml = document.querySelector(format.ssmlNode).innerHTML
         const regs = `&lt;sayas type="${type}"&gt;${text}&lt;/sayas&gt;`
-        document.querySelector('.html-text').innerHTML = ssmlHtml.replace(regs, text)
+        document.querySelector(format.ssmlNode).innerHTML = ssmlHtml.replace(regs, text)
     }).catch(() => {
         return false
     })
