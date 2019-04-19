@@ -184,7 +184,6 @@ export default {
         return false
       }
       this.wIndex++
-      console.log("w生成的html", selection)
       this.execCommand('insertHTML', false, Utils.status.w(selection, this.wIndex++))
       const html = this.queryDom(Utils.format.htmlNode)
       // this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
@@ -213,7 +212,6 @@ export default {
       this.activePhoneme.forEach(item => {
         htmls += Utils.status.phoneme(item.value, `${item.pinvalue}${item.tonevalue}`)
       })
-      console.log("ph生成的html", this.activePhoneme, htmls)
       const html = this.queryDom(Utils.format.htmlNode)
       this.execCommand('insertHTML', false, htmls)
       // this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
