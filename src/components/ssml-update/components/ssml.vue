@@ -21,7 +21,7 @@
       <div class="ssml-text html-text">{{htmlText}}</div>
     </div>
     <div>
-      总字数为：{{ssmlLen}}
+      还可以输入的字数：{{5000 - ssmlLen}}个字，登录后最多可输入5000字
     </div>
 
     <!-- 生成的SSML解析成HTML文档 -->
@@ -126,18 +126,18 @@ export default {
         activePhoneme: [], // 设置读音数组
         htmlText: '', // 生成的ssml数据
         ssmltohtml: '', // 反向生成html标签文档
-        text: '',
-        // 这是长命一个很不错的测试，现在我需要测试添加停顿，以及修改发音，设置连续，设置数字读取方式2019、2018和字母读取方式，是连读ABCD，还是单个读取abcd,然后来进行一个反编译的过程
+        text: '2007年，思必驰创立在英国剑桥高新区。思必驰专注于将领先的语音技术，应用于移动互联、智能设备、客户联络中心等行业。',
         ssmlLen: 0, // ssml原数据的长度
         breakIndex: 0, // 设置停顿的标识索引
         wIndex: 0, // 设置连续的标识索引
-        specialIndex: 0 // 设置数字和字母的标识索引
+        specialIndex: 0, // 设置数字和字母的标识索引
+        phonemeIndex: 0 // 设置汉字发音的标识索引
       }
   },
   mounted() {
     let that = this
     this.$nextTick(() => {
-      const htmls = this.queryDom(Utils.format.htmlNode)
+      const htmls = Utils.format.queryDom(Utils.format.htmlNode)
       that.ssmlLen = htmls.innerText.length
       // 文本内容改变事件
       htmls.addEventListener('input', function(){
@@ -147,32 +147,22 @@ export default {
             htmls.innerText = htmls.innerText.substring(0, 5000)
           }
           that.htmlText = Utils.replaceChat(htmls.innerHTML)
-          that.htmlText = that.comm(that.htmlText)
-          that.queryDom(Utils.format.ssmlNode).innerText = that.comm(Utils.replaceChat(htmls.innerHTML))
-          // htmls.innerHTML = Utils.clearReplace(htmls.innerHTML)
-          // that.ssmltohtml = Utils.HtmlToSsml(that.htmlText)
-          // htmls.innerHTML = Utils.clearReplace(htmls.innerHTML)
+          that.htmlText = Utils.format.comm(that.htmlText)
+          Utils.format.queryDom(Utils.format.ssmlNode).innerText = Utils.format.comm(Utils.replaceChat(htmls.innerHTML))
         }
       });
-      that.htmlText = that.comm(Utils.replaceChat(htmls.innerHTML))
+      that.htmlText = Utils.format.comm(Utils.replaceChat(htmls.innerHTML))
     })
   },
   methods: {
-    setAttributeNode (node) {
-      const len = node.length
-      for (let i = 0; i < len; i++) {
-        node[i].setAttribute('contenteditable', false)
-      }
-    },
-    comm (text) {
-      return `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${text}</speak>`
-    },
+    // 设置停顿状态
     toBreaks (active) {
       this.active = active
     },
+    // 设置连续
     toW (active) {
       this.active = active
-      let selection = this.querySelection()
+      let selection = Utils.format.querySelection()
       if (Utils.querySelectHtml().indexOf('</w>') !== -1) return false
       if (Utils.querySelectHtml().indexOf('</phoneme>') !== -1) return false
       if (!selection || selection.trim().length < 2 || selection.indexOf('|') !== -1) return false
@@ -185,15 +175,16 @@ export default {
         return false
       }
       this.wIndex++
-      this.execCommand('insertHTML', false, Utils.status.w(selection, this.wIndex++))
-      const html = this.queryDom(Utils.format.htmlNode)
+      Utils.format.execCommand('insertHTML', false, Utils.status.w(selection, this.wIndex++))
+      const html = Utils.format.queryDom(Utils.format.htmlNode)
       // this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
-      this.setAttributeNode(document.querySelectorAll('w'))
+      Utils.format.setAttributeNode(document.querySelectorAll('w'))
 
     },
+    // 设置发音
     toPhoneme (active) {
       this.active = active
-      const selection = this.querySelection()
+      const selection = Utils.format.querySelection()
       if (Utils.querySelectHtml().indexOf('</phoneme>') !== -1) return false
       if (Utils.querySelectHtml().indexOf('</w>') !== -1) return false
       if (!selection || selection.indexOf('|') !== -1) return false
@@ -210,25 +201,14 @@ export default {
       this.activePhoneme = this.activePhoneme.map((item, index) => {
               return this.createPinYin(item, index)
       })
+      this.phonemeIndex++
       this.activePhoneme.forEach(item => {
-        htmls += Utils.status.phoneme(item.value, `${item.pinvalue}${item.tonevalue}`)
+        htmls += Utils.status.phoneme(item.value, `${item.pinvalue}${item.tonevalue}`, this.phonemeIndex)
       })
-      const html = this.queryDom(Utils.format.htmlNode)
-      this.execCommand('insertHTML', false, htmls)
+      const html = Utils.format.queryDom(Utils.format.htmlNode)
+      Utils.format.execCommand('insertHTML', false, htmls)
       // this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
-      this.setAttributeNode(document.querySelectorAll('phoneme'))
-    },
-    queryDom (dom) {
-      return document.querySelector(dom)
-    },
-    querySelection(type = false) {
-      if (type) {
-        return document.getSelection()
-      }
-      return document.getSelection().toString()
-    },
-    execCommand (type = 'insertHTML', blen = false, text = '') {
-      return document.execCommand(type, blen, text);
+      Utils.format.setAttributeNode(document.querySelectorAll('phoneme'))
     },
     update (item) {
       let that = this
@@ -241,7 +221,7 @@ export default {
     },
     // 删除
     del () {
-       const htmls = this.queryDom(Utils.format.htmlNode)
+       const htmls = Utils.format.queryDom(Utils.format.htmlNode)
        htmls.innerHTML = ''
        this.htmlText = ''
        // this.ssmltohtml = Utils.HtmlToSsml(this.htmlText)
@@ -250,66 +230,72 @@ export default {
     exchange (active) {
       this.active = active
     },
+    // 设置停顿的方法
     breaks (type) {
-      const selection = this.querySelection()
+      this.hiedDiv()
+      if (!type) return false
+      const selection = Utils.format.querySelection()
       if (selection.trim()) return false
       this.breakIndex++
       let text = Utils.status.break(type, this.breakIndex)
-      this.execCommand('insertHTML', false, text)
-      const html = this.queryDom(Utils.format.htmlNode)
-      this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
-      this.hiedDiv()
-      this.setAttributeNode(document.querySelectorAll('break'))
+      Utils.format.execCommand('insertHTML', false, text)
+      const html = Utils.format.queryDom(Utils.format.htmlNode)
+      this.htmlText = Utils.format.comm(Utils.replaceChat(html.innerHTML))
+      Utils.format.setAttributeNode(document.querySelectorAll('break'))
     },
+    // 设置数字串读方式
     numbers (type) {
-      const selection =this.querySelection().trim()
+      this.hiedDiv()
+      if (!type) return false
+      const selection =Utils.format.querySelection().trim()
       if (!selection) return false
       this.specialIndex++
-      this.execCommand('insertHTML', false, Utils.status.sayas(selection, type, this.specialIndex))
+      Utils.format.execCommand('insertHTML', false, Utils.status.sayas(selection, type, this.specialIndex))
 
-      const html = this.queryDom(Utils.format.htmlNode)
-      const htmlText = this.queryDom(Utils.format.ssmlNode)
+      const html = Utils.format.queryDom(Utils.format.htmlNode)
+      const htmlText = Utils.format.queryDom(Utils.format.ssmlNode)
       // this.htmlText = Utils.replaceChat(html.innerHTML)
       // this.ssmltohtml = Utils.HtmlToSsml(this.htmlText)
       // htmlText.innerText = this.comm(Utils.replaceChat(html.innerHTML))
-      this.hiedDiv()
-      this.setAttributeNode(document.querySelectorAll('sayas'))
+      Utils.format.setAttributeNode(document.querySelectorAll('sayas'))
     },
+    // 设置字母串读方式
     acronym (type) {
-      const selection = this.querySelection()
+      this.hiedDiv()
+      if (!type) return false
+      const selection = Utils.format.querySelection()
       if (!selection) return false
       this.specialIndex++
       let text = Utils.status.sayas(selection, type, this.specialIndex)
-      this.execCommand('insertHTML', false, text)
+      Utils.format.execCommand('insertHTML', false, text)
 
-      let html = this.queryDom(Utils.format.htmlNode)
-      const htmlText = this.queryDom(Utils.format.ssmlNode)
+      let html = Utils.format.queryDom(Utils.format.htmlNode)
+      const htmlText = Utils.format.queryDom(Utils.format.ssmlNode)
       // this.htmlText = Utils.replaceChat(html.innerHTML)
       // htmlText.innerText = this.comm(Utils.replaceChat(html.innerHTML))
-      this.hiedDiv()
-      this.setAttributeNode(document.querySelectorAll('sayas'))
+      Utils.format.setAttributeNode(document.querySelectorAll('sayas'))
     },
     // 撤销最近指定的命令
     undo () {
-      this.execCommand(Utils.status.undo())
-      const html = this.queryDom(Utils.format.htmlNode)
+      Utils.format.execCommand(Utils.status.undo())
+      const html = Utils.format.queryDom(Utils.format.htmlNode)
       this.htmlText = Utils.replaceChat(html.innerHTML)
     },
     // 清除样式 可以用于清除复制粘贴过来的文本的格式
     removeFormat () {
-      this.execCommand(Utils.status.selectAll())
-      this.execCommand(Utils.status.removeFormat())
-      const html = this.queryDom('.exec')
+      Utils.format.execCommand(Utils.status.selectAll())
+      Utils.format.execCommand(Utils.status.removeFormat())
+      const html = Utils.format.queryDom('.exec')
       html.innerHTML = Utils.formatClear(html.innerHTML)
-      this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
+      this.htmlText = Utils.format.comm(Utils.replaceChat(html.innerHTML))
       // this.ssmltohtml = Utils.HtmlToSsml(this.htmlText)
     },
     // 鼠标右击事件
     mousedown (ev) {
       ev.preventDefault();
-      const customContextMenu = this.queryDom('#customContextMenu')
-      const html = this.queryDom(Utils.format.htmlNode)
-      let selection = this.querySelection()
+      const customContextMenu = Utils.format.queryDom('#customContextMenu')
+      const html = Utils.format.queryDom(Utils.format.htmlNode)
+      let selection = Utils.format.querySelection()
       if (!this.active) {
         ev.stopPropagation() // 清除冒泡
         return false
@@ -382,6 +368,7 @@ export default {
         // Utils.customContext(customContextMenu, html)
       }
     },
+    // 关闭loding框
     hiedDiv () {
       // this.active = ''
       this.centerDialogVisible = false

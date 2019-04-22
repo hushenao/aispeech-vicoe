@@ -48,7 +48,29 @@ export const format = {
     spellout: 'spell-out',
     ssmlNode: '.html-text', // 显示ssml文本的dom
     htmlNode: '.exec', // 能够编辑的dom
-    excludeReg: /[0-9a-zA-Z|,.，。！“”""''‘’@%！、]/ // 排除数字字母和符号
+    excludeReg: /[0-9a-zA-Z|,.，。！“”""''‘’@%！、]/, // 排除数字字母和符号
+    queryDom: function(dom) { // 获取DOM
+        return document.querySelector(dom)
+    },
+    querySelection: function(type = false) { // 获取选中的文本
+        if (type) {
+            return document.getSelection()
+        }
+        return document.getSelection().toString()
+    },
+    execCommand: function(type = 'insertHTML', blen = false, text = '') { // 生成需要插入的html
+        return document.execCommand(type, blen, text);
+    },
+    comm: function(text) { // 组装ssml
+        return `<?xml version="1.0" encoding="utf8"?><speak xml:lang="cn">${text}</speak>`
+    },
+    setAttributeNode: function(node) { // 给添加标签的元素加上不可编辑属性
+        const len = node.length
+        if (!len) return false
+        for (let i = 0; i < len; i++) {
+            node[i].setAttribute('contenteditable', false)
+        }
+    }
 }
 
 export const status = {
@@ -56,7 +78,7 @@ export const status = {
     removeFormat: () => 'removeFormat',
     selectAll: () => 'selectAll',
     w: (selection, wIndex) => `<w onclick="ws(this, '${selection}', '${wIndex}')" style="${format.w.style}">${selection}</w>`, // 设置连读
-    phoneme: (selection, py = 'hao') => `<phoneme onclick="phonemes(this, '${selection}', '${py}')" py="${py}" style="${format.phoneme.style}">${selection}</phoneme>`, // 修改发音
+    phoneme: (selection, py = 'hao', phonemeIndex) => `<phoneme onclick="phonemes(this, '${selection}', '${py}', '${phonemeIndex}')" py="${py}" style="${format.phoneme.style}">${selection}</phoneme>`, // 修改发音
     break: (strength, indexs) => `<break onclick="breaks(this, '${strength}', '${indexs}')" strength="${strength}" style="${format[strength].style}">|</break>`, // 添加停顿
     sayas: (selection, type, specialIndex) => {
         return `<sayas onclick="sayass(this,'${selection}', '${type}', '${specialIndex}')" type="${type}" style="${format[type].style}">${selection}</sayas>`
@@ -87,9 +109,9 @@ window.breaks = function(event, strength) {
     }).then(() => {
         const html = document.querySelector(format.htmlNode).innerHTML
             // const reg = `<break contenteditable="false" onclick="${event.getAttribute('onclick')}" strength="${strength}" style="${format[strength].style}" contenteditable="false">|</break>`
-        document.querySelector(format.htmlNode).innerHTML = html.replace(event.outerHTML, '')
+        format.queryDom(format.htmlNode).innerHTML = html.replace(event.outerHTML, '')
 
-        const htmlTextNode = document.querySelector(format.ssmlNode)
+        const htmlTextNode = format.queryDom(format.ssmlNode)
         const ssmlHtml = htmlTextNode.innerHTML
         const regs = `&lt;break strength="${strength}"&gt;&lt;/break&gt;`
         htmlTextNode.innerHTML = ssmlHtml.replace(regs, '')
@@ -105,8 +127,8 @@ window.phonemes = function(event, text, py) {
     const selection = document.getSelection().toString()
     if (!selection || selection.length > 1) return false
     Vue.prototype.$prompt(`修改“${text}(${py})”发音`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+        confirmButtonText: '修改读音',
+        cancelButtonText: '取消读音',
         inputValue: py,
         closeOnClickModal: false,
         showClose: false,
@@ -120,6 +142,12 @@ window.phonemes = function(event, text, py) {
             document.execCommand('insertHTML', false, text)
         }
     }).catch(() => {
+        const html = format.queryDom(format.htmlNode).innerHTML
+        format.queryDom(format.htmlNode).innerHTML = html.replace(event.outerHTML, text)
+        const htmlTextNode = format.queryDom(format.ssmlNode)
+        const ssmlHtml = htmlTextNode.innerHTML
+        const regs = `&lt;phoneme py="${py}"&gt;${text}&lt;/phoneme&gt;`
+        htmlTextNode.innerHTML = ssmlHtml.replace(regs, text)
         return false
     })
 }
@@ -136,13 +164,13 @@ window.ws = function(event, text) {
         showClose: false,
         modal: false
     }).then(() => {
-        const html = document.querySelector(format.htmlNode).innerHTML
+        const html = format.queryDom(format.htmlNode).innerHTML
             // const reg = `<w onclick="${event.getAttribute('onclick')}" style="${format.w.style}" contenteditable="false">${text}</w>`
-        document.querySelector(format.htmlNode).innerHTML = html.replace(event.outerHTML, text)
+        format.queryDom(format.htmlNode).innerHTML = html.replace(event.outerHTML, text)
 
-        const ssmlHtml = document.querySelector(format.ssmlNode).innerHTML
+        const ssmlHtml = format.queryDom(format.ssmlNode).innerHTML
         const regs = `&lt;w&gt;${text}&lt;/w&gt;`
-        document.querySelector(format.ssmlNode).innerHTML = ssmlHtml.replace(regs, text)
+        format.queryDom(format.ssmlNode).innerHTML = ssmlHtml.replace(regs, text)
     }).catch(() => {
         return false
     })
@@ -167,13 +195,13 @@ window.sayass = function(event, text, type) {
         showClose: false,
         modal: false
     }).then(() => {
-        const html = document.querySelector(format.htmlNode).innerHTML
+        const html = format.queryDom(format.htmlNode).innerHTML
             // const reg = `<sayas onclick="${event.getAttribute('onclick')}" type="${type}" style="${format[type].style}" contenteditable="false">${text}</sayas>`
-        document.querySelector(format.htmlNode).innerHTML = html.replace(event.outerHTML, text)
+        format.queryDom(format.htmlNode).innerHTML = html.replace(event.outerHTML, text)
 
-        const ssmlHtml = document.querySelector(format.ssmlNode).innerHTML
+        const ssmlHtml = format.queryDom(format.ssmlNode).innerHTML
         const regs = `&lt;sayas type="${type}"&gt;${text}&lt;/sayas&gt;`
-        document.querySelector(format.ssmlNode).innerHTML = ssmlHtml.replace(regs, text)
+        format.queryDom(format.ssmlNode).innerHTML = ssmlHtml.replace(regs, text)
     }).catch(() => {
         return false
     })
