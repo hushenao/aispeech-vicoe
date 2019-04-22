@@ -107,7 +107,7 @@ window.breaks = function(event, strength) {
         showClose: false,
         modal: false,
     }).then(() => {
-        const html = document.querySelector(format.htmlNode).innerHTML
+        const html = format.queryDom(format.htmlNode).innerHTML
             // const reg = `<break contenteditable="false" onclick="${event.getAttribute('onclick')}" strength="${strength}" style="${format[strength].style}" contenteditable="false">|</break>`
         format.queryDom(format.htmlNode).innerHTML = html.replace(event.outerHTML, '')
 
@@ -124,7 +124,7 @@ window.breaks = function(event, strength) {
  * 设置读音取消的交互方式
  */
 window.phonemes = function(event, text, py) {
-    const selection = document.getSelection().toString()
+    const selection = format.querySelection()
     if (!selection || selection.length > 1) return false
     Vue.prototype.$prompt(`修改“${text}(${py})”发音`, '提示', {
         confirmButtonText: '修改读音',
@@ -139,7 +139,7 @@ window.phonemes = function(event, text, py) {
         event.setAttribute('py', value)
         event.setAttribute('onclick', `phonemes(this, '${text}', '${value}')`)
         if (value) {
-            document.execCommand('insertHTML', false, text)
+            format.execCommand('insertHTML', false, text)
         }
     }).catch(() => {
         const html = format.queryDom(format.htmlNode).innerHTML
