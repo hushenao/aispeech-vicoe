@@ -63,7 +63,9 @@
       :visible.sync="centerDialogVisible"
       :width="active === 'break' ? '25%' : '30%'"
       :show-close="false"
-      :close-on-click-modal="false">
+      :close-on-click-modal="true"
+      :modal="false"
+      top="5vh">
       <!-- 设置断点 -->
       <div class="breaks option" v-show="active === 'break'">
         <h4>添加停顿</h4>
@@ -146,8 +148,7 @@ export default {
           }
           that.htmlText = Utils.replaceChat(htmls.innerHTML)
           that.htmlText = that.comm(that.htmlText)
-          document.querySelector(Utils.format.ssmlNode).innerText = that.comm(Utils.replaceChat(htmls.innerHTML))
-
+          that.queryDom(Utils.format.ssmlNode).innerText = that.comm(Utils.replaceChat(htmls.innerHTML))
           // htmls.innerHTML = Utils.clearReplace(htmls.innerHTML)
           // that.ssmltohtml = Utils.HtmlToSsml(that.htmlText)
           // htmls.innerHTML = Utils.clearReplace(htmls.innerHTML)
@@ -175,7 +176,7 @@ export default {
       if (Utils.querySelectHtml().indexOf('</w>') !== -1) return false
       if (Utils.querySelectHtml().indexOf('</phoneme>') !== -1) return false
       if (!selection || selection.trim().length < 2 || selection.indexOf('|') !== -1) return false
-      if (/[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
+      if (Utils.format.excludeReg.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
         this.active = ''
         this.$alert('选中的文字中不能包含字符串和数字', '警告', {
           confirmButtonText: '取消',
@@ -196,7 +197,7 @@ export default {
       if (Utils.querySelectHtml().indexOf('</phoneme>') !== -1) return false
       if (Utils.querySelectHtml().indexOf('</w>') !== -1) return false
       if (!selection || selection.indexOf('|') !== -1) return false
-      if (/[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
+      if (Utils.format.excludeReg.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
         this.active = ''
         this.$alert('选中的文字中不能包含字符串、数字和嵌套标签', '警告', {
           confirmButtonText: '取消',
@@ -260,39 +261,6 @@ export default {
       this.hiedDiv()
       this.setAttributeNode(document.querySelectorAll('break'))
     },
-    phoneme () {
-      const selection = this.querySelection()
-      if (!selection) return false
-
-      let htmls = ''
-      this.activePhoneme.forEach(item => {
-        htmls += Utils.status.phoneme(item.value, `${item.pinvalue}${item.tonevalue}`)
-      })
-      this.execCommand('insertHTML', false, htmls)
-      const html = this.queryDom(Utils.format.htmlNode)
-      this.htmlText = Utils.replaceChat(html.innerHTML)
-      this.hiedDiv()
-    },
-    w () {
-      let selection = this.querySelection()
-      if (!selection) return false
-      this.activeW = selection
-      let parentNode = this.querySelection(true).focusNode.parentNode
-      if (parentNode.nodeName === 'PHONEME') {
-        let selectArr = selection.replace(/\s/g, "").split('')
-        let htmls = ''
-        selectArr.forEach((item, index) => {
-          htmls += `<phoneme py=${pinyin(item, {
-            style: pinyin.STYLE_TONE2
-          })}>${item}</phoneme>`
-        })
-        selection = htmls
-      }
-      this.execCommand('insertHTML', false, Utils.status.w(selection))
-      const html = this.queryDom(Utils.format.htmlNode)
-      this.htmlText = Utils.replaceChat(html.innerHTML)
-      this.hiedDiv()
-    },
     numbers (type) {
       const selection =this.querySelection().trim()
       if (!selection) return false
@@ -333,7 +301,7 @@ export default {
       this.execCommand(Utils.status.removeFormat())
       const html = this.queryDom('.exec')
       html.innerHTML = Utils.formatClear(html.innerHTML)
-      this.htmlText = Utils.replaceChat(html.innerHTML)
+      this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
       // this.ssmltohtml = Utils.HtmlToSsml(this.htmlText)
     },
     // 鼠标右击事件

@@ -47,7 +47,8 @@ export const format = {
     number: 'number',
     spellout: 'spell-out',
     ssmlNode: '.html-text', // 显示ssml文本的dom
-    htmlNode: '.exec' // 能够编辑的dom
+    htmlNode: '.exec', // 能够编辑的dom
+    excludeReg: /[0-9a-zA-Z|,.，。！“”""''‘’@%！、]/ // 排除数字字母和符号
 }
 
 export const status = {
@@ -66,12 +67,23 @@ export const status = {
  * 设置停顿的取消交互方式
  */
 window.breaks = function(event, strength) {
-    Vue.prototype.$confirm('确认删除停顿', '提示', {
+    let title = ''
+    if (strength === 'strong') {
+        title = '长'
+    }
+    if (strength === 'medium') {
+        title = '中'
+    }
+    if (strength === 'weak') {
+        title = '短'
+    }
+    Vue.prototype.$confirm(`确认删除${title}停顿`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
         closeOnClickModal: false,
-        showClose: false
+        showClose: false,
+        modal: false,
     }).then(() => {
         const html = document.querySelector(format.htmlNode).innerHTML
             // const reg = `<break contenteditable="false" onclick="${event.getAttribute('onclick')}" strength="${strength}" style="${format[strength].style}" contenteditable="false">|</break>`
@@ -99,7 +111,8 @@ window.phonemes = function(event, text, py) {
         closeOnClickModal: false,
         showClose: false,
         inputPattern: /^[a-z]{1,}[1-5]{1}$/,
-        inputErrorMessage: '请输入正确是拼音格式(如：ping2)'
+        inputErrorMessage: '请输入正确是拼音格式(如：ping2)',
+        modal: false
     }).then(({ value = py }) => {
         event.setAttribute('py', value)
         event.setAttribute('onclick', `phonemes(this, '${text}', '${value}')`)
@@ -120,7 +133,8 @@ window.ws = function(event, text) {
         cancelButtonText: '取消',
         type: 'warning',
         closeOnClickModal: false,
-        showClose: false
+        showClose: false,
+        modal: false
     }).then(() => {
         const html = document.querySelector(format.htmlNode).innerHTML
             // const reg = `<w onclick="${event.getAttribute('onclick')}" style="${format.w.style}" contenteditable="false">${text}</w>`
@@ -150,7 +164,8 @@ window.sayass = function(event, text, type) {
         cancelButtonText: '取消',
         type: 'warning',
         closeOnClickModal: false,
-        showClose: false
+        showClose: false,
+        modal: false
     }).then(() => {
         const html = document.querySelector(format.htmlNode).innerHTML
             // const reg = `<sayas onclick="${event.getAttribute('onclick')}" type="${type}" style="${format[type].style}" contenteditable="false">${text}</sayas>`
