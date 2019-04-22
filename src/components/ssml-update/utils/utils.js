@@ -105,7 +105,7 @@ window.breaks = function(event, strength) {
         type: 'warning',
         closeOnClickModal: false,
         showClose: false,
-        modal: false,
+        modal: false
     }).then(() => {
         const html = format.queryDom(format.htmlNode).innerHTML
             // const reg = `<break contenteditable="false" onclick="${event.getAttribute('onclick')}" strength="${strength}" style="${format[strength].style}" contenteditable="false">|</break>`
