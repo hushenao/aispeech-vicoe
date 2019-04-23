@@ -10,6 +10,7 @@ import {
     getPositions,
     querySelectHtml
 } from './utils'
+import { toGetJson } from './tool'
 
 export default {
     format,
@@ -21,5 +22,6 @@ export default {
     HtmlToSsml,
     customContext,
     getPositions,
-    querySelectHtml
+    querySelectHtml,
+    toGetJson
 }

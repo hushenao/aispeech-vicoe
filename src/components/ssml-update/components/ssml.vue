@@ -10,6 +10,7 @@
       <!-- <el-button @click="undo">撤销上一步</el-button> -->
       <el-button @click="removeFormat">清除样式</el-button>
       <el-button @click="del">删除内容</el-button>
+      <el-button @click="audition">选中部分试听</el-button>
     </div>
     <!-- 主体部分 -->
     <div class='ssml-header'>
@@ -155,6 +156,11 @@ export default {
     })
   },
   methods: {
+    // 选中部分试听
+    audition () {
+      console.log(Utils.toGetJson(Utils.format.queryDom(Utils.format.htmlNode)))
+      console.log(Utils.format.comm(Utils.replaceChat(Utils.querySelectHtml())))
+    },
     // 设置停顿状态
     toBreaks (active) {
       this.active = active
