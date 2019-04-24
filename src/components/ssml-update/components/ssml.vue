@@ -132,8 +132,28 @@ export default {
         modal: false,
         closeOnClickModal: true,
         showClose: false,
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true;
+            instance.confirmButtonText = '执行中...';
+            // 发送请求的地方
+            setTimeout(() => {
+              instance.confirmButtonLoading = false;
+              done();
+            }, 3000);
+          } else {
+            done();
+          }
+        }
       }).then(() => {
         console.log(ssmlText)
+        // 实现复制功能
+        let input = document.createElement("input");
+        input.value = ssmlText;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand("Copy");
+        document.body.removeChild(input);
       }).catch(() => {
         return false
       })

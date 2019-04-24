@@ -93,3 +93,9 @@
     font-size: 14px;
     border-radius: 4px;
 }
+
+.scroll {
+    max-height: 400px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
