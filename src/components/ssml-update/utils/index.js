@@ -8,7 +8,7 @@ import {
     HtmlToSsml,
     customContext,
     getPositions,
-    querySelectHtml
+    querySelectHtml,
 } from './utils'
 import { toGetJson } from './tool'
 

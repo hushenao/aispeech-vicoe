@@ -125,8 +125,18 @@ export default {
   methods: {
     // 选中部分试听
     audition () {
-      console.log(Utils.toGetJson(Utils.format.queryDom(Utils.format.htmlNode)))
-      console.log(Utils.format.comm(Utils.replaceChat(Utils.querySelectHtml())))
+      let ssmlText = Utils.format.comm(Utils.replaceChat(Utils.querySelectHtml() || '') || this.text)
+      this.$confirm(ssmlText, '试听SSML文本', {
+        confirmButtonText: '试听',
+        cancelButtonText: '取消',
+        modal: false,
+        closeOnClickModal: true,
+        showClose: false,
+      }).then(() => {
+        console.log(ssmlText)
+      }).catch(() => {
+        return false
+      })
     },
     // 设置停顿状态
     toBreaks (active) {

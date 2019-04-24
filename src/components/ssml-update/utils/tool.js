@@ -1,6 +1,5 @@
 // 将DOM转换为JSON
 export function toGetJson(el) {
-    console.log(el)
     let a = []
     a.push(el)
 

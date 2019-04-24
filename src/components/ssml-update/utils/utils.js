@@ -155,7 +155,7 @@ window.phonemes = function(event, text, py) {
 /**
  * 设置连续取消的交互方式
  */
-window.ws = function(event, text) {
+window.ws = function(event, text, indexs) {
     Vue.prototype.$confirm(`确认清除“${text}”此处连续`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -292,7 +292,7 @@ export function HtmlToSsml(ssml) {
  * @param {能够展示的自定义区域} activeNode
  */
 export function customContext(customContextMenu, activeNode) {
-    //自定鼠标右键
+    //自定鼠标右键 oncontextmenu
     document.oncontextmenu = function(ev) {
         ev = ev || window.ev;
         ev.preventDefault();
@@ -356,6 +356,7 @@ export function querySelectHtml() {
     let selectionObj = null,
         rangeObj = null;
     selectionObj = document.getSelection();
+    if (selectionObj.type == "None") return false
     rangeObj = selectionObj.getRangeAt(0);
     let docFragment = rangeObj.cloneContents();
     let tempDiv = document.createElement("div");
