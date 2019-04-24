@@ -56,7 +56,7 @@ export const format = {
         if (type) {
             return document.getSelection()
         }
-        return document.getSelection().toString()
+        return document.getSelection().toString().trim()
     },
     execCommand: function(type = 'insertHTML', blen = false, text = '') { // 生成需要插入的html
         return document.execCommand(type, blen, text);

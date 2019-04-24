@@ -25,39 +25,6 @@
       还可以输入的字数：{{5000 - ssmlLen}}个字，登录后最多可输入5000字
     </div>
 
-    <!-- 生成的SSML解析成HTML文档 -->
-    <!-- <div style="text-align:left;">生成的SSML解析成HTML文档：</div>
-    <div class="html-text" v-html="ssmltohtml"></div> -->
-    <!-- <div class="to-right-click" id="customContextMenu" v-show="active">
-      <div class="phoneme option" v-show="active === 'phoneme'">
-        <h4>修改发音</h4>
-        <div class="edit-list">
-          <div class="edit-title">
-            <span>文字</span>
-            <span>拼音</span>
-            <span>声调</span>
-          </div>
-          <div class="edit-item" v-for="(item, index) in activePhoneme" :key="index">
-            <div>{{item.value}}</div>
-            <div>
-              <el-radio-group v-model="item.pinvalue" @change='update(item)'>
-                <el-radio v-for="(its, i) in item.pin" :label="its" :key="its + i">{{its}}</el-radio>
-              </el-radio-group>
-            </div>
-            <div>
-              <el-radio-group v-model="item.tonevalue" @change='update(item)'>
-                <el-radio v-for="(its, i) in item.tone" :label="its" :key="its + i + Math.random()">{{its}}</el-radio>
-              </el-radio-group>
-            </div>
-          </div>
-          <div>
-            <el-button @click="hiedDiv">取消</el-button>
-            <el-button @click="phoneme">保存</el-button>
-          </div>
-        </div>
-      </div>
-    </div> -->
-
     <!-- 弹出操作框部分 -->
     <el-dialog
       title="提示"
@@ -183,7 +150,6 @@ export default {
       this.wIndex++
       Utils.format.execCommand('insertHTML', false, Utils.status.w(selection, this.wIndex++))
       const html = Utils.format.queryDom(Utils.format.htmlNode)
-      // this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
       Utils.format.setAttributeNode(document.querySelectorAll('w'))
 
     },
@@ -213,7 +179,6 @@ export default {
       })
       const html = Utils.format.queryDom(Utils.format.htmlNode)
       Utils.format.execCommand('insertHTML', false, htmls)
-      // this.htmlText = this.comm(Utils.replaceChat(html.innerHTML))
       Utils.format.setAttributeNode(document.querySelectorAll('phoneme'))
     },
     update (item) {
@@ -230,7 +195,6 @@ export default {
        const htmls = Utils.format.queryDom(Utils.format.htmlNode)
        htmls.innerHTML = ''
        this.htmlText = ''
-       // this.ssmltohtml = Utils.HtmlToSsml(this.htmlText)
     },
     // 切换状态
     exchange (active) {
@@ -260,9 +224,6 @@ export default {
 
       const html = Utils.format.queryDom(Utils.format.htmlNode)
       const htmlText = Utils.format.queryDom(Utils.format.ssmlNode)
-      // this.htmlText = Utils.replaceChat(html.innerHTML)
-      // this.ssmltohtml = Utils.HtmlToSsml(this.htmlText)
-      // htmlText.innerText = this.comm(Utils.replaceChat(html.innerHTML))
       Utils.format.setAttributeNode(document.querySelectorAll('sayas'))
     },
     // 设置字母串读方式
@@ -277,8 +238,6 @@ export default {
 
       let html = Utils.format.queryDom(Utils.format.htmlNode)
       const htmlText = Utils.format.queryDom(Utils.format.ssmlNode)
-      // this.htmlText = Utils.replaceChat(html.innerHTML)
-      // htmlText.innerText = this.comm(Utils.replaceChat(html.innerHTML))
       Utils.format.setAttributeNode(document.querySelectorAll('sayas'))
     },
     // 撤销最近指定的命令
@@ -294,7 +253,6 @@ export default {
       const html = Utils.format.queryDom('.exec')
       html.innerHTML = Utils.formatClear(html.innerHTML)
       this.htmlText = Utils.format.comm(Utils.replaceChat(html.innerHTML))
-      // this.ssmltohtml = Utils.HtmlToSsml(this.htmlText)
     },
     // 鼠标右击事件
     mousedown (ev) {
@@ -312,7 +270,6 @@ export default {
         }
         if (this.active === Utils.format.phoneme.value) {
           if (/[0-9a-zA-Z]/.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
-            // this.active = ''
             ev.preventDefault()
             ev.stopPropagation()
             this.$alert('选中的文字中不能包含字符串和数字', '警告', {
@@ -346,7 +303,6 @@ export default {
         if (this.active === Utils.format.number) {
           if (!selection) return false
           if (Utils.judgeNaN(selection.trim() * 1)) {
-            // this.active = ''
             ev.preventDefault()
             ev.stopPropagation()
             this.$alert('选中的不是数字', '警告', {
@@ -360,7 +316,6 @@ export default {
         if (this.active === Utils.format.spellout) {
           if (!selection) return false
           if (!Utils.IsEN(selection.trim())) {
-            // this.active = ''
             ev.preventDefault()
             ev.stopPropagation()
             this.$alert('选中的不是字符', '警告', {
@@ -376,9 +331,7 @@ export default {
     },
     // 关闭loding框
     hiedDiv () {
-      // this.active = ''
       this.centerDialogVisible = false
-      // document.querySelector('#customContextMenu').style.display = "none";
     },
     // 获取汉字的拼音 包括多音字
     createPinYin (item, index) {
@@ -421,59 +374,4 @@ export default {
 
 <style scoped>
 @import '../css/style.css';
-/* .exec {
-  border: 1px solid pink;
-  min-height: 120px;
-  text-align: left;
-  letter-spacing: 3px;
-} */
-/* .to-right-click {
-  width: 350px;
-  min-height: 200px;
-  max-height: 300px;
-  overflow-y: auto;
-  background-color:cornsilk;
-  text-align: left;
-}
-#customContextMenu {
-  position: fixed;
-  list-style: none;
-  padding: 0 0 10px 0;
-  margin: 0;
-  display: none;
-} */
-/* .html-text {
-  margin-top: 20px;
-  min-height: 120px;
-  border: 1px solid pink;
-  white-space: pre-line;
-  text-align: left;
-  letter-spacing: 3px;
-} */
-/* .breaks {
-  padding-left: 20px;
-}
-.radios {
-  display: block;
-  margin-bottom: 20px;
-  text-align: left;
-}
-.option {
-  padding: 0 20px 0 20px;
-} */
-/* .edit-title > span, .edit-item > div {
-  width: 90px;
-  height: 33px;
-  display: inline-block;
-  margin: 0 5px;
-} */
-/* .edit-title > span:nth-child(1),  .edit-item > div:nth-child(1) {
-  width: 50px;
-} */
-/* .selecteds {
-  min-height: 60px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  border: 1px solid pink;
-} */
 </style>
