@@ -146,14 +146,7 @@ export default {
           }
         }
       }).then(() => {
-        console.log(ssmlText)
-        // 实现复制功能
-        let input = document.createElement("input");
-        input.value = ssmlText;
-        document.body.appendChild(input);
-        input.select();
-        document.execCommand("Copy");
-        document.body.removeChild(input);
+        Utils.copyHtml(ssmlText)
       }).catch(() => {
         return false
       })

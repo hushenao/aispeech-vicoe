@@ -363,3 +363,13 @@ export function querySelectHtml() {
     tempDiv.appendChild(docFragment);
     return tempDiv.innerHTML;
 }
+
+export function copyHtml(text) {
+    // 实现复制功能
+    let input = document.createElement("input");
+    input.value = text;
+    document.body.appendChild(input);
+    input.select();
+    format.execCommand("Copy");
+    document.body.removeChild(input);
+}

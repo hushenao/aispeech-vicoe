@@ -9,6 +9,7 @@ import {
     customContext,
     getPositions,
     querySelectHtml,
+    copyHtml
 } from './utils'
 import { toGetJson } from './tool'
 
@@ -23,5 +24,6 @@ export default {
     customContext,
     getPositions,
     querySelectHtml,
-    toGetJson
+    toGetJson,
+    copyHtml
 }
