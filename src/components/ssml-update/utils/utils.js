@@ -138,9 +138,14 @@ window.phonemes = function(event, text, py) {
     }).then(({ value = py }) => {
         event.setAttribute('py', value)
         event.setAttribute('onclick', `phonemes(this, '${text}', '${value}')`)
-        if (value) {
-            format.execCommand('insertHTML', false, text)
-        }
+
+        // if (value) {
+        //     format.execCommand('insertHTML', false, text)
+        // }
+
+        let html = format.queryDom(format.htmlNode).innerHTML
+        let htmlTextNode = format.queryDom(format.ssmlNode)
+        htmlTextNode.innerText = format.comm(replaceChat(html))
     }).catch(() => {
         const html = format.queryDom(format.htmlNode).innerHTML
         format.queryDom(format.htmlNode).innerHTML = html.replace(event.outerHTML, text)
