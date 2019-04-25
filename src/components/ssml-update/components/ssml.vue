@@ -159,9 +159,16 @@ export default {
     toW (active) {
       this.active = active
       let selection = Utils.format.querySelection()
-      if (Utils.querySelectHtml().indexOf('</w>') !== -1) return false
-      if (Utils.querySelectHtml().indexOf('</phoneme>') !== -1) return false
-      if (!selection || selection.trim().length < 2 || selection.indexOf('|') !== -1) return false
+      if (Utils.querySelectHtml().indexOf('</phoneme>') !== -1 ||
+        Utils.querySelectHtml().indexOf('</w>') !== -1 ||
+        !selection ||
+        selection.trim().length < 2 ||
+        selection.indexOf('|') !== -1) {
+        this.$alert('所选择的文本已经包含了其它设置，无法再次设置', '警告', {
+          confirmButtonText: '取消'
+        })
+        return false
+      }
       if (Utils.format.excludeReg.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
         this.active = ''
         this.$alert('选中的文字中不能包含字符串和数字', '警告', {
@@ -180,9 +187,15 @@ export default {
     toPhoneme (active) {
       this.active = active
       const selection = Utils.format.querySelection()
-      if (Utils.querySelectHtml().indexOf('</phoneme>') !== -1) return false
-      if (Utils.querySelectHtml().indexOf('</w>') !== -1) return false
-      if (!selection || selection.indexOf('|') !== -1) return false
+      if (Utils.querySelectHtml().indexOf('</phoneme>') !== -1 ||
+        Utils.querySelectHtml().indexOf('</w>') !== -1 ||
+        !selection ||
+        selection.indexOf('|') !== -1) {
+        this.$alert('所选择的文本已经包含了其它设置，无法再次设置', '警告', {
+          confirmButtonText: '取消'
+        })
+        return false
+      }
       if (Utils.format.excludeReg.test(selection.trim()) || !Utils.judgeNaN(selection.trim() * 1) || Utils.IsEN(selection.trim())) {
         this.active = ''
         this.$alert('选中的文字中不能包含字符串、数字和嵌套标签', '警告', {
@@ -288,7 +301,13 @@ export default {
         return false
       } else {
         if (this.active === Utils.format.strong.value) {
-          if (selection.trim()) return false
+
+          if (selection.trim()) {
+            this.$alert('请将光标放在文本中需要停顿的位置', '警告', {
+              confirmButtonText: '取消'
+            })
+            return false
+          }
           this.centerDialogVisible = true
         }
         if (this.active === Utils.format.phoneme.value) {
